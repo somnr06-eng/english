@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Login | English Dictation Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-shell {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-shell {
+            max-width: 440px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #19324a 0%, #2c6e9e 100%);
+            color: white;
+            padding: 2rem 2rem 1.5rem;
+        }
+
+        .login-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .login-header p {
+            margin: 0.6rem 0 0;
+            opacity: 0.88;
+            line-height: 1.5;
+            font-size: 0.92rem;
+        }
+
+        .login-panel {
+            padding: 1.6rem;
+        }
+
+        .login-card {
+            background: #f8fafc;
+            border: 1px solid #dbe5ef;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+        }
+
+        .login-title {
+            margin: 0 0 0.35rem;
+            font-size: 1.15rem;
+            color: #183247;
+        }
+
+        .login-subtitle {
+            margin: 0 0 1rem;
+            color: #526476;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 0.95rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #304458;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.98rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #2c6e9e;
+            box-shadow: 0 0 0 3px rgba(44,110,158,0.18);
+        }
+
+        .login-submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 999px;
+            background: #2c6e9e;
+            color: white;
+            padding: 0.95rem 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-submit-btn:hover {
+            background: #21567c;
+        }
+
+        .login-hint,
+        .login-error {
+            border-radius: 1rem;
+            padding: 0.85rem 1rem;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            margin-top: 0.9rem;
+        }
+
+        .login-hint {
+            background: #eef6fb;
+            border: 1px solid #cfe2f1;
+            color: #29465f;
+        }
+
+        .login-error {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #b42318;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .login-header,
+            .login-panel { padding-left: 1rem; padding-right: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <div class="login-shell">
+        <div class="login-header">
+            <h1>学号密码登录</h1>
+            <p>登录成功后将跳转到主页。</p>
+        </div>
+        <div class="login-panel">
+            <div class="login-card">
+                <h2 class="login-title">欢迎回来</h2>
+                <p class="login-subtitle">请输入学号和登录密码。</p>
+                <div class="form-group">
+                    <label class="form-label" for="studentIdInput">学号</label>
+                    <input id="studentIdInput" class="form-input" type="text" placeholder="请输入学号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="passwordInput">密码</label>
+                    <input id="passwordInput" class="form-input" type="password" placeholder="请输入登录密码">
+                </div>
+                <button id="loginBtn" class="login-submit-btn">登录</button>
+                <div id="loginError" class="login-error hidden"></div>
+                <div class="login-hint">
+                    该页面将通过 Cloudflare Pages Functions 调用真实后端登录接口。<br>
+                    请在 Cloudflare 项目里配置服务端环境变量后再部署上线。
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const studentIdInput = document.getElementById('studentIdInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    let authLoading = false;
+
+    function showLoginError(message) {
+        loginError.textContent = message;
+        loginError.classList.remove('hidden');
+    }
+
+    function clearLoginError() {
+        loginError.textContent = '';
+        loginError.classList.add('hidden');
+    }
+
+    function isValidStudentId(studentId) {
+        return studentId.length > 0;
+    }
+
+    function setAuthLoading(loading) {
+        authLoading = loading;
+        loginBtn.disabled = loading;
+        loginBtn.textContent = loading ? '登录中...' : '登录';
+    }
+
+    async function ensureLoggedOutView() {
+        try {
+            const response = await fetch('/api/session', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+            if (response.ok) {
+                window.location.replace('/home.html');
+            }
+        } catch (error) {
+            // Ignore and stay on login page.
+        }
+    }
+
+    async function handleLogin() {
+        if (authLoading) return;
+        const studentId = studentIdInput.value.trim();
+        const password = passwordInput.value;
+        clearLoginError();
+
+        if (!isValidStudentId(studentId)) {
+            showLoginError('请输入学号。');
+            return;
+        }
+
+        if (password.length < 6) {
+            showLoginError('密码长度至少需要 6 位。');
+            return;
+        }
+
+        setAuthLoading(true);
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ studentId, password })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                showLoginError(data.error || '登录失败，请稍后重试。');
+                return;
+            }
+            passwordInput.value = '';
+            window.location.replace('/home.html');
+        } catch (error) {
+            showLoginError('网络异常，暂时无法连接登录服务。');
+        } finally {
+            setAuthLoading(false);
+        }
+    }
+
+    loginBtn.addEventListener('click', handleLogin);
+    [studentIdInput, passwordInput].forEach((input) => {
+        input.addEventListener('input', clearLoginError);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+    });
+
+    ensureLoggedOutView();
+</script>
+</body>
+</html>

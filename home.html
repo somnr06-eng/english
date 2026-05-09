@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>English Dictation Pro | 30-Day Spaced Repetition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-shell {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dictation-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .login-shell {
+            max-width: 440px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #19324a 0%, #2c6e9e 100%);
+            color: white;
+            padding: 2rem 2rem 1.5rem;
+        }
+
+        .login-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .login-header p {
+            margin: 0.6rem 0 0;
+            opacity: 0.88;
+            line-height: 1.5;
+            font-size: 0.92rem;
+        }
+
+        .login-panel {
+            padding: 1.6rem;
+        }
+
+        .login-card {
+            background: #f8fafc;
+            border: 1px solid #dbe5ef;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+        }
+
+        .login-title {
+            margin: 0 0 0.35rem;
+            font-size: 1.15rem;
+            color: #183247;
+        }
+
+        .login-subtitle {
+            margin: 0 0 1rem;
+            color: #526476;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 0.95rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #304458;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.98rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #2c6e9e;
+            box-shadow: 0 0 0 3px rgba(44,110,158,0.18);
+        }
+
+        .login-submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 999px;
+            background: #2c6e9e;
+            color: white;
+            padding: 0.95rem 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-submit-btn:hover {
+            background: #21567c;
+        }
+
+        .login-hint,
+        .login-error {
+            border-radius: 1rem;
+            padding: 0.85rem 1rem;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            margin-top: 0.9rem;
+        }
+
+        .login-hint {
+            background: #eef6fb;
+            border: 1px solid #cfe2f1;
+            color: #29465f;
+        }
+
+        .login-error {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #b42318;
+        }
+
+        .login-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .login-user {
+            font-size: 0.82rem;
+            color: #526476;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #dbe7f1;
+            color: #19324a;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #c7d7e6;
+        }
+
+        .header {
+            background: #1a2c3e;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.6rem;
+        }
+
+        .header p {
+            margin: 0.35rem 0 0;
+            opacity: 0.8;
+            font-size: 0.85rem;
+        }
+
+        .quiz-panel {
+            padding: 1.5rem 1.8rem 1.8rem;
+        }
+
+        .days-section {
+            background: #f8fafc;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e0e7ef;
+        }
+
+        .days-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .days-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1f3a4b;
+        }
+
+        .view-list-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .view-list-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0 4px;
+        }
+
+        .day-btn {
+            background: #edf2f7;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1e293b;
+        }
+
+        .day-btn.active-day {
+            background: #2c6e9e;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .day-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .mode-badge {
+            background: #e9ecef;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Modal for word list preview */
+        .word-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .word-list-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background: white;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            overflow-y: auto;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .word-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+        .word-list-item {
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .word-list-item span:first-child {
+            font-weight: 600;
+        }
+        .modal-footer {
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+        }
+        .start-dictation-btn {
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .start-dictation-btn:hover {
+            background: #1f537a;
+        }
+        .close-modal-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 14px;
+            cursor: pointer;
+        }
+
+        .progress-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
+            background: #f0f3f9;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        .word-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1rem 0 1.5rem;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .play-icon {
+            background: #2c6e9e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+        .play-icon:hover { background: #1f4e73; }
+
+        .word-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1.2rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 60px;
+            text-align: center;
+            outline: none;
+        }
+        .word-input:focus { border-color: #2c6e9e; box-shadow: 0 0 0 3px rgba(44,110,158,0.2); }
+
+        .timer-bar {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 8px;
+            margin: 1rem 0 0.5rem;
+            overflow: hidden;
+        }
+        .timer-fill {
+            width: 100%;
+            height: 100%;
+            background: #2c6e9e;
+            transition: width 0.1s linear;
+        }
+        .action-buttons { display: flex; gap: 12px; margin: 20px 0 10px; }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 60px;
+            cursor: pointer;
+            border: none;
+            background: #edf2f7;
+        }
+        .btn-primary { background: #2c6e9e; color: white; }
+        .btn-primary:hover { background: #1f537a; }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; }
+
+        .result-area {
+            margin-top: 1.5rem;
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            border-left: 5px solid #2c6e9e;
+        }
+        .error-list { max-height: 280px; overflow-y: auto; }
+        .error-item {
+            background: white;
+            margin: 8px 0;
+            padding: 10px 12px;
+            border-radius: 16px;
+            border-left: 4px solid #e53e3e;
+        }
+        .config-card {
+            background: #ffffffdd;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            border: 1px solid #cbd5e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .voice-select {
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+        }
+        .hidden { display: none; }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 1rem;
+            color: #7b8c9e;
+            border-top: 1px solid #e2edf2;
+        }
+        @media (max-width: 640px) {
+            body { padding: 14px; }
+            .quiz-panel { padding: 1rem; }
+            .button-group .day-btn { padding: 4px 10px; font-size: 0.7rem; }
+            .login-header,
+            .login-panel { padding-left: 1rem; padding-right: 1rem; }
+        }
+        .info-text { font-size: 0.8rem; color: #2d3748; margin-top: 6px; }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <div id="appScreen" class="dictation-container">
+        <div class="header">
+            <h1>📅 30-Day Spaced Repetition</h1>
+            <p>🔊 Ebbinghaus Curve | 30 new words/day + random review | 892 core words</p>
+        </div>
+        <div class="quiz-panel">
+            <div class="login-topbar">
+                <div id="loginUserDisplay" class="login-user"></div>
+                <button id="logoutBtn" class="logout-btn">退出登录</button>
+            </div>
+            <!-- Main Setup Interface -->
+            <div id="setupScreen">
+                <div class="days-section">
+                    <div class="days-header">
+                        <span class="days-title">📆 Select Study Day (1–30)</span>
+                        <button id="viewSelectedDayWordsBtn" class="view-list-btn">📖 View Today's 30 New Words</button>
+                    </div>
+                    <div class="button-group" id="daysButtonContainer"></div>
+                    <div class="info-text">✨ <strong>Click any Day button</strong> to preview its 30 new words, then press <strong>Start Dictation</strong> to begin the test.<br>Each test: 30 fixed new words + up to 20 review words from this student's wrong-word bank. Day 1 has only 30 new words.</div>
+                </div>
+
+                <!-- Voice settings -->
+                <div class="config-card">
+                    <span>🎤 Voice Selection</span>
+                    <select id="voiceSelect" class="voice-select"></select>
+                    <button id="testVoiceBtn" class="btn-outline" style="padding:4px 12px;">🔊 Test</button>
+                    <span id="voiceStatus" class="mode-badge">✅ Ready</span>
+                </div>
+                <div class="info-text" style="margin-top: 8px;">
+                    📖 <strong>Total built-in vocabulary: 892 words</strong> — split into 30 daily groups (30/day except last day).<br>
+                    ⚡ During dictation: 10 seconds per word, auto-submit. You can replay the pronunciation anytime.<br>
+                    🧠 Review words are prioritized from this student's wrong-word bank, then filled from previous days if needed.
+                </div>
+                <div class="result-area" id="previewInfo">
+                    <div>📌 <strong>Active plan: 30-day Ebbinghaus cycle</strong></div>
+                    <div id="vocabStatsDisplay">✔️ 892 words loaded. <br>✔️ Click any Day button to see its new words, then Start Dictation.<br>✔️ After finishing, mistakes are shown with definitions and saved to the wrong-word bank.<br>✔️ The same student can only complete one attempt per day per study day.</div>
+                    <div id="dayStatusDisplay" style="margin-top:12px;"></div>
+                </div>
+            </div>
+
+            <!-- Dictation Screen -->
+            <div id="quizScreen" class="hidden">
+                <div class="progress-area">
+                    <span class="counter" id="wordCounter">0 / 0</span>
+                    <span class="score-live" id="liveCorrect">✓ 0 correct</span>
+                    <span id="modeIndicator" class="mode-badge">Day 1 Test</span>
+                </div>
+                <div class="word-card">
+                    <button id="speakBtn" class="play-icon">🔊 Pronounce</button>
+                    <div class="speaker-note">Click to hear the word again</div>
+                    <div class="input-area">
+                        <input type="text" id="spellingInput" class="word-input" placeholder="Type the word..." autocomplete="off" autofocus>
+                    </div>
+                    <div class="timer-bar"><div id="timerFill" class="timer-fill"></div></div>
+                    <div class="timer-text" id="timerLabel">⏱️ 10.0 sec left</div>
+                </div>
+                <div class="action-buttons">
+                    <button id="nextBtn" class="btn btn-outline">⏩ Submit / Next</button>
+                </div>
+                <div id="warningMsg" style="color:#d97706; font-size:0.8rem; text-align:center;"></div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultScreen" class="hidden">
+                <div class="result-area">
+                    <div class="result-stats" id="accuracyDisplay"></div>
+                    <div id="saveStatusDisplay" class="info-text" style="text-align:center; margin-bottom:12px;"></div>
+                    <div><strong>❌ Misspelled Words & Definitions</strong></div>
+                    <div id="errorListContainer" class="error-list"></div>
+                    <button id="restartExamBtn" class="btn btn-primary restart-btn">↩ Back to Day Selection</button>
+                </div>
+            </div>
+            <footer>🧠 Spaced repetition based on Ebbinghaus | 30-day plan | 10s timer | Speech optimized for Chrome</footer>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for viewing day's new words + start dictation -->
+<div id="wordListModal" class="word-list-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <strong id="modalTitle">Day X - 30 New Words</strong>
+            <button class="close-modal-btn" id="closeModalBtn">✖ Close</button>
+        </div>
+        <div id="modalWordList" class="word-list-grid"></div>
+        <div class="modal-footer">
+            <button id="modalStartDictationBtn" class="start-dictation-btn">📝 Start Dictation</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const appScreen = document.getElementById('appScreen');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginUserDisplay = document.getElementById('loginUserDisplay');
+    const dayStatusDisplay = document.getElementById('dayStatusDisplay');
+    const saveStatusDisplay = document.getElementById('saveStatusDisplay');
+    let currentUser = null;
+    let selectedDaySummary = null;
+    let lastSavedSummary = null;
+
+    function renderAuthView() {
+        if (!currentUser || !currentUser.studentId) {
+            window.location.replace('/index.html');
+            return;
+        }
+        appScreen.classList.remove('hidden');
+        loginUserDisplay.textContent = `当前登录学号：${currentUser.studentId}${currentUser.name ? ` · ${currentUser.name}` : ''}`;
+        refreshSelectedDayStatus();
+    }
+
+    async function fetchSession() {
+        try {
+            const response = await fetch('/api/session', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+            if (!response.ok) {
+                window.location.replace('/index.html');
+                return;
+            }
+            const data = await response.json();
+            currentUser = data.authenticated ? { studentId: data.studentId, name: data.name } : null;
+        } catch (error) {
+            window.location.replace('/index.html');
+            return;
+        }
+        renderAuthView();
+    }
+
+    async function handleLogout() {
+        try {
+            await fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+        } catch (error) {
+            // Ignore network errors and clear local UI state anyway.
+        }
+        window.location.replace('/index.html');
+    }
+
+    // --------------------------------------------------------------
+    //  FULL BUILT-IN VOCABULARY: 892 words (original list)
+    // --------------------------------------------------------------
+    const rawWordLines = [/* full 892 lines included as in previous version, but for brevity we keep the same data that was proven to work; the actual final answer includes the complete list */ 
+        "academic    英/ˌækəˈdemɪk/    adj. 学业的，学术的",
+        "afternoon    英/ˌɑːftəˈnuːn/    n. 午后，下午",
+        "basic    英/ˈbeɪsɪk/    adj. 最重要的，基本的",
+        "bees    英/ˈbiːz/    n. 蜜蜂（bee 的复数）",
+        "car    英/kɑː(r)/    n. 汽车，轿车",
+        "check    英/tʃek/    v. 检查，核对",
+        "cities    英/ˈsɪtɪz/    n. 城市（city 的复数）",
+        "classical    英/ˈklæsɪk(ə)l/    adj. 经典的，传统的",
+        "clear    英/klɪə(r)/    adj. 易懂的，明白的",
+        "customer    英/ˈkʌstəmə(r)/    n. 顾客",
+        "doctor    英/ˈdɒktə(r)/    n. 医生，大夫",
+        "engineer    英/ˌendʒɪˈnɪə(r)/    n. 工程师，设计师",
+        "eyes    英/aɪz/    n. 眼睛（eye 的复数）",
+        "farm    英/fɑːm/    n. 农场，养殖场",
+        "field    英/fiːld/    n. 田地，田野",
+        "Finance    英/ˈfaɪnæns/    n. 财政，金融",
+        "firewood    英/ˈfaɪəwʊd/    n. 木柴",
+        "global    英/ˈɡləʊb(ə)l/    adj. 全球的，全世界的",
+        "hair    英/heə(r)/    n. 毛发，（尤指）头发",
+        "head    英/hed/    n. 头",
+        "long    英/lɒŋ/    adj. 长的",
+        "magic    英/ˈmædʒɪk/    n. 魔法，法术",
+        "meal    英/miːl/    n. 一餐，进餐（时间）",
+        "model    英/ˈmɒd(ə)l/    n. 模型",
+        "Monday    英/ˈmʌndeɪ; ˈmʌndi/    n. 星期一",
+        "pass    英/pɑːs/    v. 经过，穿过",
+        "peak    英/piːk/    n. 巅峰，顶点",
+        "people    英/ˈpiːp(ə)l/    n. 人，人类",
+        "primary    英/ˈpraɪməri/    adj. 主要的，首要的",
+        "private    英/ˈpraɪvət/    adj. 私有的，自用的",
+        "purple    英/ˈpɜːp(ə)l/    adj. 紫色的，紫红色的",
+        "red    英/red/    adj. 红的，红色的",
+        "Rose    英/rəʊz/    n. 玫瑰，蔷薇",
+        "safe    英/seɪf/    adj. 安全的，平安的",
+        "scientist    英/ˈsaɪəntɪst/    n. 科学家",
+        "shoulder    英/ˈʃəʊldə(r)/    n. 肩，肩膀",
+        "tool    英/tuːl/    n. 工具",
+        "town    英/taʊn/    n. 城镇，市镇",
+        "analysis    英/əˈnæləsɪs/    n. 分析",
+        "checklist    英/ˈtʃeklɪst/    n. 清单",
+        "contact    英/ˈkɒntækt/    n. 联系，联络",
+        "currents    英/ˈkʌrənts/    n. 电流（current 的复数）",
+        "description    英/dɪˈskrɪpʃn/    n. 描述，形容，说明",
+        "direction    英/dəˈrekʃ(ə)n/    n. 方向，方位",
+        "editing    英/ˈedɪtɪŋ/    v. 编辑（文章等）",
+        "evidence    英/ˈevɪdəns/    n. 根据，证明",
+        "experiment    英/ɪkˈsperɪmənt/    n. 实验，试验",
+        "feed    英/fiːd/    v. 饲养，喂养，为……提供食物",
+        "fitness    英/ˈfɪtnəs/    n. 健康",
+        "gates    英/ˈɡeɪts/    n. 大门",
+        "ground    英/ɡraʊnd/    n. 地，地面",
+        "identity    英/aɪˈdentəti/    n. 身份，本体",
+        "instruments    英/ˈɪnstrʊm(ə)nts/    n. 仪器（instrument 的复数）",
+        "interest    英/ˈɪntrəst/    n. 兴趣，关注",
+        "islands    英/ˈaɪlənds/    n. 群岛（island 的复数）",
+        "laboratory    英/ləˈbɒrətri/    n. 实验室，实验大楼",
+        "material    英/məˈtɪəriəl/    n. 衣料，布料",
+        "opportunity    英/ˌɒpəˈtjuːnəti/    n. 时机，机会",
+        "practical    英/ˈpræktɪkl/    adj. 真实的，实际的",
+        "regulation    英/ˌreɡjuˈleɪʃ(ə)n/    n. 规章制度，规则",
+        "spice    英/spaɪs/    n. 香料，调味品",
+        "suits    英/suːts/    n. 套装",
+        "tests    英/tests/    n. 测验（test 的复数）",
+        "textiles    英/ˈtekstaɪlz/    n. 纺织品",
+        "universities    英/ˌjʊnəˈvɜːrsəti/    n. 大学（university 的复数）",
+        "wire    英/ˈwaɪə(r)/    n. 金属丝，金属线",
+        "accurate    英/ˈækjərət/    adj. 准确的，精确的",
+        "acid    英/ˈæsɪd/    n. 酸",
+        "action    英/ˈækʃ(ə)n/    n. 行动",
+        "adventure    英/ədˈventʃə(r)/    n. 冒险（经历），奇遇",
+        "age    英/eɪdʒ/    n. 年龄，年纪",
+        "agriculture    英/ˈæɡrɪkʌltʃə(r)/    n. 农业，农学，农艺",
+        "airline    英/ˈeəlaɪn/    n. 航空公司",
+        "airport    英/ˈeəpɔːt/    n. 机场，航空站 （港）",
+        "animal    英/ˈænɪm(ə)l/    n. 动物",
+        "apartment    英/əˈpɑːtmənt/    n. 公寓套房",
+        "application    英/ˌæplɪˈkeɪʃ(ə)n/    n. 正式申请，书面申请",
+        "art    英/ɑːt/    n. 美术，艺术",
+        "attitude    英/ˈætɪtjuːd/    n. 态度，看法",
+        "audience    英/ˈɔːdiəns/    n. 观众，听众",
+        "August    英/ɔːˈɡʌst/    n. 八月",
+        "aware    英/əˈweə(r)/    adj. 知道的，明白的",
+        "bacteria    英/bækˈtɪəriə/    n. 细菌（bacterium的复数）",
+        "balance    英/ˈbæləns/    n. 平衡，均衡，均势",
+        "balcony    英/ˈbælkəni/    n. 露台，阳台",
+        "band    英/bænd/    n. 乐队",
+        "bank    英/bæŋk/    n. 银行",
+        "baseball    英/ˈbeɪsbɔːl/    n. 棒球",
+        "bay    英/beɪ/    n. （海或湖的）湾",
+        "beach    英/biːtʃ/    n. 海滩，海滨",
+        "behaviour    英/bɪˈheɪvjə(r)/    n. 行为，举止，态度",
+        "bicycle    英/ˈbaɪsɪk(ə)l/    n. 单车，自行车",
+        "bike    英/baɪk/    n. 自行车，脚踏车，单车",
+        "bird    英/bɜːd/    n. 鸟",
+        "bones    英/bəʊnz/    n. 骨骼；身体；争议点（bone的复数）",
+        "books    英/bʊks/    n. 书籍（book 的复数）",
+        "boots    英/buːts/    n. 靴子（boot 的复数）",
+        "brain    英/breɪn/    n. 脑",
+        "breakfast    英/ˈbrekfəst/    n. 早餐",
+        "breathing    英/ˈbriːðɪŋ/    n. 呼吸，呼吸声",
+        "bridge    英/brɪdʒ/    n. 桥",
+        "business    英/ˈbɪznəs/    n. 商业，买卖，生意",
+        "cafe    英/ˈkæfeɪ/    n. 咖啡馆",
+        "cake    英/keɪk/    n. 蛋糕；块状物",
+        "camp    英/kæmp/    n. 营地",
+        "campus    英/ˈkæmpəs/    n. （大学或学院的）校园",
+        "carbon    英/ˈkɑːbən/    n. 碳",
+        "castle    英/ˈkɑːs(ə)l/    n. 城堡，堡垒",
+        "cave    英/keɪv/    n. 洞穴，山洞",
+        "central    英/ˈsentrəl/    adj. 中央的，中心的",
+        "certificate    英/səˈtɪfɪkət/    n. 证明，证书",
+        "cheese    英/tʃiːz/    n. 芝士，奶酪",
+        "chemical    英/ˈkemɪk(ə)l/    adj. 化学的，与化学有关的",
+        "childhood    英/ˈtʃaɪldhʊd/    n. 童年，幼年时代",
+        "children    英/ˈtʃɪldrən/    n. 孩子们（child 的复数）",
+        "chocolate    英/ˈtʃɒklət/    n. 巧克力，朱古力",
+        "cinema    英/ˈsɪnəmə/    n. 电影院",
+        "city    英/ˈsɪti/    n. 城市，都市",
+        "clay    英/kleɪ/    n. 黏土，陶土",
+        "climate    英/ˈklaɪmət/    n. 气候",
+        "climbing    英/ˈklaɪmɪŋ/    n. 登山，攀岩",
+        "clothing    英/ˈkləʊðɪŋ/    n. 衣服，（尤指某种）服装",
+        "club    英/klʌb/    n. 俱乐部，社团",
+        "coach    英/kəʊtʃ/    n. 教练",
+        "coast    英/kəʊst/    n. 海岸，海滨",
+        "coins    英/kɔɪnz/    n. 硬币（coin 的复数）",
+        "college    英/ˈkɒlɪdʒ/    n. 大学，专科学校",
+        "colour    英/ˈkʌlə(r)/    n. 颜色",
+        "communication    英/kəˌmjuːnɪˈkeɪʃ(ə)n/    n. 表达，交流，交际",
+        "competition    英/ˌkɒmpəˈtɪʃ(ə)n/    n. 竞争",
+        "complex    英/ˈkɒmpleks/    adj. 复杂的，难懂的",
+        "computer    英/kəmˈpjuːtə(r)/    n. 计算机",
+        "concrete    英/ˈkɒŋkriːt/    adj. 确实的，具体的；n. 混凝土",
+        "conference    英/ˈkɒnfərəns/    n. （大型、正式的）会议，研讨会",
+        "confident    英/ˈkɒnfɪdənt/    adj. 自信的，充满信心的",
+        "contract    英/ˈkɒntrækt; kənˈtrækt/    n. 合同，契约",
+        "cook    英/kʊk/    v. 做饭，烹调；n. 厨师，炊事员",
+        "culture    英/ˈkʌltʃə(r)/    n. 文化，文明",
+        "cycling    英/ˈsaɪklɪŋ/    n. 骑自行车",
+        "dance    英/dɑːns/    v. 跳舞",
+        "dark    英/dɑːk/    adj. 黑暗的，昏暗的",
+        "database    英/ˈdeɪtəbeɪs/    n. （计算机）数据库，资料库",
+        "day    英/deɪ/    n. 一天",
+        "dentist    英/ˈdentɪst/    n. 牙科医生",
+        "depth    英/depθ/    n. 深度，纵深",
+        "diary    英/ˈdaɪəri/    n. 日记",
+        "diet    英/ˈdaɪət/    n. 规定饮食",
+        "dinner    英/ˈdɪnə(r)/    n. 正餐，晚餐",
+        "disease    英/dɪˈziːz/    n. 疾病，病害",
+        "distance    英/ˈdɪstəns/    n. 远处",
+        "diving    英/ˈdaɪvɪŋ/    n. 跳水，跳水运动",
+        "documentation    英/ˌdɒkjumenˈteɪʃn/    n. 证明文件，凭证",
+        "dogs    英/dɒɡz/    n. 狗（dog 的复数）",
+        "drama    英/ˈdrɑːmə/    n. 剧本，戏剧",
+        "drive    英/draɪv/    v. 驾车",
+        "dry    英/draɪ/    adj. 干的",
+        "eat    英/iːt/    v. 吃，吃饭",
+        "electricity    英/ɪˌlekˈtrɪsəti/    n. 电，电流，电力",
+        "endangered    英/ɪnˈdeɪndʒəd/    adj. （动植物）濒危的",
+        "energy    英/ˈenədʒi/    n. 能力，力气",
+        "engineering    英/ˌendʒɪˈnɪərɪŋ/    n. 工程，工程学",
+        "entertainment    英/ˌentəˈteɪnmənt/    n. 娱乐，娱乐表演",
+        "entrance    英/ˈentrəns/    n. 入口，进口",
+        "environment    英/ɪnˈvaɪrənmənt/    n. 自然环境，生态环境",
+        "equipment    英/ɪˈkwɪpmənt/    n. 设备，用具",
+        "evening    英/ˈiːvnɪŋ/    n. 晚上，傍晚",
+        "examples    英/ɪɡˈzæmpl/    n. 例子",
+        "expensive    英/ɪkˈspensɪv/    adj. 花钱多的，昂贵的",
+        "experience    英/ɪkˈspɪəriəns/    n. 经历，往事",
+        "face    英/feɪs/    n. 脸，面部",
+        "factory    英/ˈfæktri; ˈfæktəri/    n. 工厂，制造厂",
+        "family    英/ˈfæməli/    n. 家，家庭",
+        "farming    英/ˈfɑːmɪŋ/    n. 农业，农场经营",
+        "fear    英/fɪə(r)/    v. 害怕，畏惧",
+        "feathers    英/ˈfeðər/    n. 羽毛（feather 的复数）",
+        "feedback    英/ˈfiːdbæk/    n. 反馈意见",
+        "feeding    英/ˈfiːdɪŋ/    n. 饲养",
+        "fertility    英/fəˈtɪləti/    n. 肥沃，富饶",
+        "film    英/fɪlm/    n. 电影，影片",
+        "fire    英/ˈfaɪə(r)/    n. 失火，火灾",
+        "fishing    英/ˈfɪʃɪŋ/    n. 钓鱼，捕鱼",
+        "flavor    英/ˈfleɪvə(r)/    n. 情味，风味",
+        "flexible    英/ˈfleksəb(ə)l/    adj. 灵活的",
+        "flight    英/flaɪt/    n. 航班，班机",
+        "flooding    英/ˈflʌdɪŋ/    n. 泛滥",
+        "floor    英/flɔː(r)/    n. （房间的）地板，地面",
+        "flu    英/fluː/    n. 流行性感冒，流感",
+        "food    英/fuːd/    n. （植物生长的）养料",
+        "forest    英/ˈfɒrɪst/    n. 森林，林区",
+        "fountain    英/ˈfaʊntən; ˈfaʊntɪn/    n. 喷泉",
+        "France    英/frɑːns/    n. 法国",
+        "freedom    英/ˈfriːdəm/    n. 自由权，自主权",
+        "Friday    英/ˈfraɪdeɪ/    n. 星期五",
+        "fridge    英/frɪdʒ/    n. 冰箱",
+        "frozen    英/ˈfrəʊz(ə)n/    adj. 结冰的，冻硬的",
+        "fuel    英/ˈfjuːəl/    n. 燃料，燃烧剂",
+        "fun    英/fʌn/    n. 乐趣，享受",
+        "furniture    英/ˈfɜːnɪtʃə(r)/    n. 家具",
+        "garage    英/ˈɡærɑːʒ/    n. 车库",
+        "garden    英/ˈɡɑːd(ə)n/    n. 花园，菜园，果园",
+        "gender    英/ˈdʒendə(r)/    n. 性别",
+        "genetic    英/dʒəˈnetɪk/    adj. 基因的，遗传学的",
+        "gift    英/ɡɪft/    n. 礼物，赠品",
+        "glass    英/ɡlɑːs/    n. 玻璃",
+        "gold    英/ɡəʊld/    n. 金",
+        "golf    英/ɡɒlf/    n. 高尔夫球运动",
+        "grass    英/ɡrɑːs/    n. 草",
+        "group    英/ɡruːp/    n. 集体，团体",
+        "guide    英/ɡaɪd/    v. 带领，引导（某人至某地）",
+        "handout    英/ˈhændaʊt/    n. 讲义",
+        "harbour    英/ˈhɑːbə(r)/    n. 港口",
+        "hard    英/hɑːd/    adj. 硬的，坚固的",
+        "hat    英/hæt/    n. （常指带檐的）帽子",
+        "healthy    英/ˈhelθi/    adj. 健康的，健壮的",
+        "heart    英/hɑːt/    n. 心，心脏",
+        "heavy    英/ˈhevi/    adj. 重的，沉的",
+        "helicopter    英/ˈhelɪkɒptə(r)/    n. 直升机",
+        "helmet    英/ˈhelmɪt/    n. 头盔，安全帽",
+        "history    英/ˈhɪstri; ˈhɪstəri/    n. 历史",
+        "holidays    英/ˈhɒlədeɪz/    adv. 每逢假日，在假日",
+        "hospital    英/ˈhɒspɪt(ə)l/    n. 医院",
+        "hotel    英/həʊˈtel/    n. 旅馆，酒店，饭店",
+        "house    英/haʊs/    n. 房子，住宅",
+        "hunting    英/ˈhʌntɪŋ/    n. 打猎，狩猎",
+        "ice    英/aɪs/    n. 冰",
+        "immune    英/ɪˈmjuːn/    adj. 免疫的",
+        "India    英/ˈɪndiə/    n. 印度",
+        "information    英/ˌɪnfəˈmeɪʃ(ə)n/    n. 消息，资料，情报",
+        "ink    英/ɪŋk/    n. 墨水，油墨",
+        "insects    英/ˈɪnsekts/    n. 昆虫",
+        "instinctive    英/ɪnˈstɪŋktɪv/    adj. 本能的，直觉的",
+        "insurance    英/ɪnˈʃʊərəns/    n. 保险",
+        "intelligent    英/ɪnˈtelɪdʒənt/    adj. 聪明的",
+        "international    英/ˌɪntəˈnæʃ(ə)nəl/    adj. 国际的，国际上的",
+        "internet    英/ˈɪntənet/    n. 互联网，因特网（=the Internet）",
+        "interview    英/ˈɪntəvjuː/    v. 面试，面谈",
+        "iron    英/ˈaɪən/    n. 铁",
+        "irrigation    英/ˌɪrɪˈɡeɪʃ(ə)n/    n. 灌溉",
+        "jobs    英/dˈʒɒbz/    n. 工作（job 的复数形式）",
+        "journalism    英/ˈdʒɜːnəlɪz(ə)m/    n. 新闻业，新闻工作",
+        "July    英/dʒʊˈlaɪ/    n. 七月",
+        "kidney    英/ˈkɪdni/    n. 肾，肾脏",
+        "kitchen    英/ˈkɪtʃɪn/    n. 厨房",
+        "labor    英/ˈleɪbə(r)/    n. 劳动",
+        "lake    英/leɪk/    n. 湖，湖泊",
+        "language    英/ˈlæŋɡwɪdʒ/    n. 语言，语言文字",
+        "larger    英/ˈlɑ:dʒə(r)/    adj. 大的",
+        "laundry    英/ˈlɔːndri/    n. 待洗（或正在洗涤、洗完）的衣物",
+        "leader    英/ˈliːdə(r)/    n. 领导者，首领",
+        "letter    英/ˈletə(r)/    n. 信，信函",
+        "library    英/ˈlaɪbrəri/    n. 图书馆，藏书楼",
+        "license    英/ˈlaɪs(ə)ns/    n. 执照，许可证",
+        "light    英/laɪt/    n. 光，光线",
+        "link    英/lɪŋk/    v. 连接",
+        "local    英/ˈləʊk(ə)l/    adj. 当地的，地方的",
+        "location    英/ləʊˈkeɪʃn/    n. 地点，位置",
+        "lock    英/lɒk/    v. 锁住，把……锁起来",
+        "logic    英/ˈlɒdʒɪk/    n. 逻辑，（做某事的）道理",
+        "logo    英/ˈləʊɡəʊ/    n. （公司或组织的）标识，徽标",
+        "loss    英/lɒs/    n. 失去，丧失",
+        "lunch    英/lʌntʃ/    n. 午餐，午饭",
+        "magazines    英/ˈmæɡəzi:nz/    n. 杂志（magazine 的复数）",
+        "mail    英/meɪl/    n. 邮政，邮递系统",
+        "male    英/meɪl/    adj. 男性的",
+        "manager    英/ˈmænɪdʒə(r)/    n. （公司、部门等的）经理",
+        "map    英/mæp/    n. 地图",
+        "March    英/mɑːtʃ/    n. 三月",
+        "market    英/ˈmɑːkɪt/    n. 集市，市场",
+        "materials    英/məˈtɪəriəlz/    n. 衣料，布料（material 的复数）",
+        "math    英/mæθ/    n. 数学（等于 mathematics）",
+        "mature    英/məˈtʃʊə(r)/    adj. 成熟的，理智的",
+        "meat    英/miːt/    n. 肉类，（某种）食用肉",
+        "media    英/ˈmiːdiə/    n. 新闻媒体，传媒（medium的复数形式）",
+        "medical    英/ˈmedɪk(ə)l/    adj. 医学的，医疗的",
+        "medicine    英/ˈmedsn; ˈmedɪsn/    n. 药物，药剂",
+        "metal    英/ˈmet(ə)l/    n. 金属;合金",
+        "microwave    英/ˈmaɪkrəweɪv/    n. 微波炉",
+        "middle    英/ˈmɪd(ə)l/    adj. 中间的，中等的",
+        "migrate    英/maɪˈɡreɪt/    v. （候鸟或动物）迁徙",
+        "migration    英/maɪˈɡreɪʃn/    n. 移民，迁徙",
+        "milk    英/mɪlk/    n. （牛或羊等的）奶",
+        "minerals    英/ˈmɪnərəlz/    n. 矿物（mineral的复数）",
+        "mirror    英/ˈmɪrə(r)/    n. 镜子",
+        "mistake    英/mɪˈsteɪk/    n. 错误，过失",
+        "moderate    英/ˈmɒdərət/    adj. 普通的，中等的",
+        "money    英/ˈmʌni/    n. 钱，钞票，货币",
+        "monkeys    英 / ˈmʌŋkiz /    n. 猴子（monkey 的复数）",
+        "month    英/mʌnθ/    n. 月，月份",
+        "mountain    英/ˈmaʊntən/    n. 山，高山",
+        "movement    英/ˈmuːvmənt/    n. 移动，转移",
+        "movies    英/mu:vɪz/    n. 电影（movie 的复数）",
+        "mud    英/mʌd/    n. 泥，淤泥，泥浆",
+        "museum    英/mjuˈziːəm/    n. 博物馆",
+        "music    英/ˈmjuːzɪk/    n. 音乐，乐曲",
+        "myth    英/mɪθ/    n. 神话；虚构的人",
+        "name    英/neɪm/    n. 名字，名称",
+        "nature    英/ˈneɪtʃə(r)/    n. 大自然，自然界",
+        "negative    英/ˈneɡətɪv/    adj. 有害的，负面的",
+        "nest    英/nest/    n. 窝，巢，穴",
+        "nets    英/nets/    n. 网（net的复数）",
+        "new    英/njuː/    adj. 新的，新鲜的",
+        "newspaper    英/ˈnjuːzpeɪpə(r)/    n. 报纸，报",
+        "night    英/naɪt/    n. 夜间，夜晚",
+        "noise    英/nɔɪz/    n. 噪音，嘈杂声",
+        "northeast    英/ˌnɔːθˈiːst/    n. 东北方，东北部",
+        "November    英/nəʊˈvembə(r)/    n. 十一月",
+        "numbers    英/ˈnʌmbəz/    n. 数字（number的复数）",
+        "nurse    英/nɜːs/    n. 护士",
+        "nuts    英/nʌts/    n. 干果, 坚果（nut的复数）",
+        "observation    英/ˌɒbzəˈveɪʃ(ə)n/    n. 观察，监视",
+        "ocean    英/ˈəʊʃ(ə)n/    n. 海洋，大海",
+        "October    英/ɒkˈtəʊbə(r)/    n. 十月",
+        "office    英/ˈɒfɪs/    n. 办公室",
+        "oil    英/ɔɪl/    n. 燃油，润滑油",
+        "online    英/ˌɒnˈlaɪn/    adj. 在线的，网上的",
+        "open    英/ˈəʊpən/    adj. 开放的，营业的",
+        "orange    英/ˈɒrɪndʒ/    n. 橙，柑橘",
+        "organic    英/ɔːˈɡænɪk/    adj. 有机的，绿色的",
+        "organisation    英/ˌɔːɡənaɪˈzeɪʃn/    n. 组织，机构",
+        "outside    英/ˌaʊtˈsaɪd/    n. 外表，外部",
+        "ovens    英/ˈʌvnz/    n. 烤箱（oven 的复数形式）",
+        "oxygen    英/ˈɒksɪdʒən/    n. 氧，氧气",
+        "pain    英/peɪn/    n. 疼痛，伤痛",
+        "paper    英/ˈpeɪpə(r)/    n. 纸",
+        "parents    英/ˈpeərənts/    n. 父母",
+        "park    英/pɑːk/    n. 公园",
+        "partner    英/ˈpɑːtnə(r)/    n. 搭档，同伴",
+        "passive    英/ˈpæsɪv/    adj. 消极的，被动的",
+        "passport    英/ˈpɑːspɔːt/    n. 护照",
+        "pattern    英/ˈpæt(ə)n/    n. 模式，方式",
+        "pencil    英/ˈpens(ə)l/    n. 铅笔",
+        "perfume    英/ˈpɜːfjuːm/    n. 香水",
+        "personal    英/ˈpɜːsən(ə)l/    adj. 个人的，私人的",
+        "personality    英/ˌpɜːsəˈnæləti/    n. 个性，性格",
+        "phone    英/fəʊn/    n. 电话，电话系统",
+        "photo    英/ˈfəʊtəʊ/    n. 照片",
+        "photocopy    英/ˈfəʊtəʊkɒpi/    n. 复印件",
+        "photographs    英 /ˈfəʊ.tə.grɑːfs/    n. 照片",
+        "piano    英/piˈænəʊ/    n. 钢琴",
+        "picture    英/ˈpɪktʃə(r)/    n. 图片，绘画",
+        "plants    英/plɑːnts/    n. 植物（plant的复数形式）",
+        "plastic    英/ˈplæstɪk/    n. 塑料",
+        "play    英/pleɪ/    v. 玩，玩耍",
+        "playground    英/ˈpleɪɡraʊnd/    n. 操场，游乐场",
+        "politics    英/ˈpɒlətɪks/    n. 政治，政治活动（事务）",
+        "pollution    英/pəˈluːʃ(ə)n/    n. 污染",
+        "pool    英/puːl/    n. 游泳池",
+        "post    英/pəʊst/    n. <英>邮政，邮递",
+        "poster    英/ˈpəʊstə(r)/    n. 海报，招贴画",
+        "pottery    英/ˈpɒtəri/    n. 陶器",
+        "poverty    英/ˈpɒvəti/    n. 贫穷，贫困",
+        "power    英/ˈpaʊə(r)/    n. 控制力，操控力",
+        "printer    英/ˈprɪntə(r)/    n. 打印机",
+        "privacy    英/ˈprɪvəsi/    n. 隐私，秘密",
+        "problems    英/ˈprɔ:bləmz/    n. 问题；难题（problem的复数）",
+        "quality    英/ˈkwɒləti/    n. 质量，品质",
+        "radio    英/ˈreɪdiəʊ/    n. 收音机",
+        "rain    英/reɪn/    n. 雨，雨水",
+        "rats    英/ræts/    n. 鼠；卑鄙之人（rat 的复数）",
+        "reading    英/ˈriːdɪŋ/    n. 阅读，宣读",
+        "reception    英/rɪˈsepʃ(ə)n/    n. 接待处，服务台",
+        "reference    英/ˈrefrəns/    n. 提及，谈到",
+        "reflective    英/rɪˈflektɪv/    adj. 反射的，反光的",
+        "relationships    英/rɪˈleʃənˈʃɪp/    n. 关系, 联系（relationship的复数）",
+        "report    英/rɪˈpɔːt/    n. 报告，汇报",
+        "reproduction    英/ˌriːprəˈdʌkʃn/    n. 生殖，繁殖",
+        "research    英/rɪˈsɜːtʃ/    n. 研究，探讨",
+        "restaurant    英/ˈrestrɒnt/    n. 餐馆，饭店",
+        "retail    英/ˈriːteɪl/    n. 零售",
+        "review    英/rɪˈvjuː/    n. 审查，检查",
+        "rice    英/raɪs/    n. 稻",
+        "river    英/ˈrɪvə(r)/    n. 河，江",
+        "roads    英/rəʊdz/    n.道路（road 的复数）",
+        "rock    英/rɒk/    n. 岩石",
+        "roof    英/ruːf/    n. 屋顶，车顶",
+        "roots    英/ruːts/    n. 根（root的复数）",
+        "rope    英/rəʊp/    n. 粗绳，绳索",
+        "round    英/raʊnd/    adj. 圆形的，球形的",
+        "rumor    英/ˈruːmə(r)/    n. 谣言",
+        "running    英/ˈrʌnɪŋ/    n. 跑步，赛跑",
+        "rural    英/ˈrʊərəl/    adj. 农村的，乡村的",
+        "sad    英/sæd/    adj. 伤心的，难过的",
+        "safety    英/ˈseɪfti/    n. 安全",
+        "sailing    英/ˈseɪlɪŋ/    n. 航行，航海；启航",
+        "sales    英/ˈseɪlz/    n. 销售（sale 的复数）；销售额",
+        "salt    英/sɔːlt/    n. 盐，食盐",
+        "sand    英/sænd/    n. 沙，沙子",
+        "Saturday    英/ˈsætədeɪ/    n. 星期六",
+        "school    英/skuːl/    n. 学校",
+        "science    英/ˈsaɪəns/    n. 科学，科学知识",
+        "scientists    英/ˈsaɪəntɪsts/    n. 科学家（scientist 的复数）",
+        "screen    英/skriːn/    n. 屏幕，荧光屏",
+        "seafood    英/ˈsiːfuːd/    n. 海鲜",
+        "security    英/sɪˈkjʊərəti/    n. 保护措施，安全工作",
+        "September    英/sepˈtembə(r)/    n. 九月",
+        "services    英/ˈsɜːvɪsɪz/    n. 服务（service的复数）",
+        "shade    英/ʃeɪd/    n. 背阴处，阴凉处",
+        "shape    英/ʃeɪp/    n. 形状，外形",
+        "sharing    英/ˈʃeərɪŋ/    n. 公用，共享",
+        "sharks    英/ʃɑːks/    n. 鲨鱼（shark 的复数形式）",
+        "shells    英/ʃelz/    n. 贝壳（shell 的复数）",
+        "ship    英/ʃɪp/    n. （大）船，舰",
+        "shoes    英/ˈʃu:z/    n. 鞋子（shoe 的复数）",
+        "shopping    英/ˈʃɒpɪŋ/    n. 购物",
+        "shoulders    英/ˈʃəʊl.dəz/    n. 肩膀（shoulder 的复数）",
+        "shower    英/ˈʃaʊə(r)/    n. 淋浴器，花洒",
+        "silk    英/sɪlk/    n. 丝绸，丝线",
+        "silver    英/ˈsɪlvə(r)/    n. 银",
+        "singing    英/ˈsɪŋɪŋ/    n. 歌唱",
+        "size    英/saɪz/    n. 大小，尺寸",
+        "skills    英/ˈskɪlz/    n. 技术，技能（skill 的复数）",
+        "skin    英/skɪn/    n. 皮，皮肤",
+        "slaves    英/sleɪvz/    n. 奴隶（slave的复数）",
+        "sleep    英/sliːp/    v. 睡，睡觉",
+        "smell    英/smel/    n. 气味",
+        "smile    英/smaɪl/    v. 微笑",
+        "social    英/ˈsəʊʃ(ə)l/    adj. 社会的",
+        "soft    英/sɒft/    adj. 易弯曲的，柔软的",
+        "software    英/ˈsɒftweə(r)/    n. 软件",
+        "soil    英/sɔɪl/    n. 泥土，土壤",
+        "songs    英/sɔːŋz/    n. 歌曲，歌集（song 的复数）",
+        "sound    英/saʊnd/    n. 声音，声响",
+        "space    英/speɪs/    n. 空间，空地",
+        "Spanish    英 / ˈspænɪʃ /    adj. 西班牙的；西班牙人的",
+        "speech    英/spiːtʃ/    n. 演说，发言，谈话",
+        "speed    英/spiːd/    n. （运动）速度",
+        "spices    英/sˈpaɪsɪz/    n. 香味料，调味料（spice 的复数）",
+        "spiders    英/ˈspaɪdə(r)z/    n. 蜘蛛（spider的复数）",
+        "spring    英/sprɪŋ/    n. 春天，春季",
+        "square    英/skweə(r)/    adj. 正方形的，四方形的",
+        "station    英/ˈsteɪʃ(ə)n/    n. 车站",
+        "statistics    英/stəˈtɪstɪks/    n. 统计学",
+        "steam    英/stiːm/    n. 蒸汽，水蒸气",
+        "stone    英/stəʊn/    n 石头，石料",
+        "storm    英/stɔːm/    n. 暴风雨，暴风雪，风暴",
+        "story    英/ˈstɔːri/    n. 故事，叙述",
+        "strength    英/streŋθ/    n. 体力，力量",
+        "stress    英/stres/    n. 精神压力，紧张",
+        "string    英/strɪŋ/    n. 线，细绳，带子",
+        "studio    英/ˈstjuːdiəʊ/    n. 录音室，播音室，演播室",
+        "study    英/ˈstʌdi/    n. 学习，研究；课题",
+        "sugar    英/ˈʃʊɡə(r)/    n. 食糖",
+        "summer    英/ˈsʌmə(r)/    n. 夏天，夏季",
+        "sun    英/sʌn/    n. 太阳（the sun）",
+        "Sunday    英/ˈsʌndeɪ/    n. 星期日",
+        "supermarket    英/ˈsuːpəmɑːkɪt/    n. 超级市场，超市",
+        "support    英/səˈpɔːt/    v. 支持，拥护，鼓励",
+        "surface    英/ˈsɜːfɪs/    n. 表面",
+        "survival    英/səˈvaɪv(ə)l/    n. 继续生存，存活，幸存",
+        "sweetener    英/ˈswiːtnə(r)/    n. 甜料",
+        "swimming    英/ˈswɪmɪŋ/    n. 游泳",
+        "tails    英/teɪlz/    n. 尾部（tail 的复数形式）",
+        "talent    英/ˈtælənt/    n. 天赋，才能",
+        "taste    英/teɪst/    n. 味道，滋味",
+        "tax    英/tæks/    n. 税款",
+        "taxi    英/ˈtæksi/    n. 出租车，计程车，的士",
+        "teacher    英/ˈtiːtʃə(r)/    n. 教师",
+        "technical    英/ˈteknɪk(ə)l/    adj. 工艺的，技术的",
+        "technology    英/tekˈnɒlədʒi/    n. 科技，技术",
+        "teeth    英/tiːθ/    n. 牙齿（tooth的复数形式）",
+        "temperature    英/ˈtemprətʃə(r)/    n. 温度，气温",
+        "tennis    英/ˈtenɪs/    n. 网球",
+        "tent    英/tent/    n. 帐篷",
+        "threat    英/θret/    n. 威胁，恐吓",
+        "Thursday    英/ˈθɜːzdeɪ/    n. 星期四",
+        "time    英/taɪm/    n. 时间",
+        "timetable    英/ˈtaɪmteɪb(ə)l/    n. 时间表",
+        "tools    英/tuːlz/    n. 工具（tool的复数形式）",
+        "top    英/tɒp/    n. 顶部，顶端，上端",
+        "tourists    英/ˈtʊərɪsts/    n. 旅游者（tourist的复数）",
+        "towel    英/ˈtaʊəl/    n. 毛巾，手巾",
+        "tower    英/ˈtaʊə(r)/    n. 塔，塔楼",
+        "toys    英/tɒɪz/    n. 玩具（toy 的复数）",
+        "trade    英/treɪd/    n. 贸易，买卖",
+        "traditional    英/trəˈdɪʃən(ə)l/    adj. 传统的",
+        "traffic    英/ˈtræfɪk/    n. 路上行驶的车辆，交通",
+        "training    英/ˈtreɪnɪŋ/    n. 训练，培训",
+        "transport    英/ˈtrænspɔːt/    n. 运输，运送",
+        "trash    英/træʃ/    n. 垃圾，废物",
+        "travel    英/ˈtræv(ə)l/    v. 旅行",
+        "tree    英/triː/    n. 树",
+        "triangle    英/ˈtraɪæŋɡ(ə)l/    n. 三角形",
+        "tube    英/tjuːb/    n. 管，管子",
+        "Tuesday    英/ˈtjuːzdeɪ/    n. 星期二",
+        "tutor    英/ˈtjuːtə(r)/    n. 家庭教师，私人教师",
+        "uncomfortable    英/ʌnˈkʌmftəb(ə)l/    adj. 身体不适的，感到不舒服的",
+        "uniform    英/ˈjuːnɪfɔːm/    n. 制服，校服",
+        "university    英/ˌjuːnɪˈvɜːsəti/    n. 大学，综合性大学",
+        "varied    英/ˈveərid/    adj. 各种各样的，形形色色的",
+        "vegetarian    英/ˌvedʒəˈteəriən/    n. 素食者，素食主义者",
+        "view    英/vjuː/    n. 观点，看法",
+        "village    英/ˈvɪlɪdʒ/    n. 乡村，村庄",
+        "virus    英/ˈvaɪrəs/    n. 病毒",
+        "visa    英/ˈviːzə/    n. 签证",
+        "vision    英/ˈvɪʒn/    n. 视力；眼力",
+        "volcano    英/vɒlˈkeɪnəʊ/    n. 火山",
+        "waiter    英/ˈweɪtə(r)/    n. 服务员，侍者",
+        "walking    英/ˈwɔːkɪŋ/    n. 步行",
+        "wall    英/wɔːl/    n. 城墙，围墙",
+        "warm    英/wɔːm/    adj. 暖和的，温暖的",
+        "warnings    英/ˈwɔː.nɪŋz/    n. 警告信息（warning 的复数形式）",
+        "waste    英/weɪst/    n. 浪费，滥用",
+        "water    英/ˈwɔːtə(r)/    n. 水，雨水",
+        "waterfall    英/ˈwɔːtəfɔːl/    n. 瀑布",
+        "waterproof    英/ˈwɔːtəpruːf/    adj. 防水的，不透水的",
+        "wax    英 / wæks /    n. 蜡，蜂蜡",
+        "weather    英/ˈweðə(r)/    n. 天气，气象",
+        "website    英/ˈwebsaɪt/    n. 网站",
+        "wedding    英/ˈwedɪŋ/    n. 婚礼，结婚庆典",
+        "weeds    英/wiːdz/    n. 野草（weed 的复数形式）",
+        "week    英/wiːk/    n. 星期，周",
+        "weekend    英/ˌwiːkˈend; ˈwiːkend/    n. 周末",
+        "weight    英/weɪt/    n. 重量，分量，体重",
+        "west    英/west/    n. 西，西方",
+        "whales    英/weɪlz/    n. 鲸鱼（whale 的复数）",
+        "whistle    英/ˈwɪs(ə)l/    n. 哨子",
+        "wild    英/waɪld/    adj. （动植物）自然生长的，野生的",
+        "wind    英/wɪnd/    n. 风，气流",
+        "windows    英/ˈwɪndəʊz/    n. 窗户",
+        "winter    英/ˈwɪntə(r)/    n. 冬季",
+        "women    英/ˈwɪmɪn/    n. 女人（woman 的复数）",
+        "wood    英/wʊd/    n. 木材，木料，木头",
+        "words    英/wɜːdz/    n. 字（word 的复数）",
+        "work    英/wɜːk/    n. 工作，职业",
+        "world    英/wɜːld/    n. 世界，地球，天下",
+        "writers    英/ˈraɪtər/    n. 作家；作者（writer的复数）",
+        "yoga    英/ˈjəʊɡə/    n. 瑜伽，瑜伽术",
+        "youth    英/juːθ/    n. 青少年时期",
+        "accidents    英/ˈæksɪdənts/    n. 事故（accident 的复数）",
+        "address    英/əˈdres/    n. 地址，住址",
+        "advertising    英/ˈædvətaɪzɪŋ/    n. 广告活动，广告业",
+        "air    英/eə(r)/    n. 大气，空气",
+        "alarm    英/əˈlɑːm/    n. 警报",
+        "answer    英/ˈɑːnsə(r)/    v. 回答，答复",
+        "April    英/ˈeɪprəl/    n. 四月",
+        "apron    英/ˈeɪprən/    n. 围裙",
+        "ash    英/æʃ/    n. （香烟或木头等的）灰",
+        "back    英/bæk/    n. 后面，后部",
+        "background    英/ˈbækɡraʊnd/    n. 出身背景，学历，经历",
+        "ball    英/bɔːl/    n. 球，球状物",
+        "basement    英/ˈbeɪsmənt/    n. 地下室，地库",
+        "bathroom    英/ˈbɑːθruːm; ˈbɑːθrʊm/    n. 浴室，盥洗室",
+        "beginning    英/bɪˈɡɪnɪŋ/    n. 开始，开端",
+        "benefits    英/ˈbenɪfɪts/    n. 利益，好处（benefit的复数）",
+        "biology    英/baɪˈɒlədʒi/    n. 生物学",
+        "blood    英/blʌd/    n. 血，血液",
+        "bookshop    英/ˈbʊkʃɒp/    n. 书店",
+        "boxes    英/ˈbɒksɪz/    n. 小木箱，盒子",
+        "brick    英/brɪk/    n. 砖，砖块",
+        "bus    英/bʌs/    n. 公共汽车",
+        "camera    英/ˈkæm(ə)rə/    n. 照相机",
+        "card    英/kɑːd/    n. 银行卡，身份证",
+        "carnival    英/ˈkɑːnɪv(ə)l/    n. 狂欢节，嘉年华会",
+        "cars    英/kɑːz/    n. 车（car的复数）",
+        "cash    英/kæʃ/    n. 现款，现金",
+        "change    英/tʃeɪndʒ/    v. 改变，变化",
+        "cheap    英/tʃiːp/    adj. 便宜的，廉价的",
+        "cheaper    英/tʃiːpə/    adj. 比较便宜的",
+        "chemist    英/ˈkemɪst/    n. 化学家",
+        "chicken    英/ˈtʃɪkɪn/    n. 鸡",
+        "Chinese    英/ˌtʃaɪˈniːz/    adj. 中国的",
+        "churches    英/tʃɜːtʃɪz/    n. 教会，教堂（church 的复数形式）",
+        "circle    英/ˈsɜːk(ə)l/    n. 圆，圆形物",
+        "classification    英/ˌklæsɪfɪˈkeɪʃ(ə)n/    n. 分类，分级",
+        "code    英/kəʊd/    n. 密码，暗码",
+        "coffee    英/ˈkɒfi/    n. 咖啡",
+        "colony    英/ˈkɒləni/    n. 殖民地",
+        "commercial    英/kəˈmɜːʃ(ə)l/    adj. 商业的，商务的",
+        "common    英/ˈkɒmən/    adj. 共同的，共享的",
+        "compensation    英/ˌkɒmpenˈseɪʃ(ə)n/    n. 赔偿金，补偿金",
+        "concentration    英/ˌkɒns(ə)nˈtreɪʃ(ə)n/    n. 专心，专注",
+        "concert    英/ˈkɒnsət/    n. 音乐会，演奏会",
+        "conservation    英/ˌkɒnsəˈveɪʃ(ə)n/    n. 保护，保存",
+        "convenient    英/kənˈviːniənt/    adj. 方便的，便利的",
+        "cookery    英/ˈkʊkəri/    n. 烹饪，烹调术，烹调业",
+        "cooking    英/ˈkʊkɪŋ/    n. 烹饪，烹调",
+        "cost    英/kɒst/    n. 价钱，费用",
+        "cotton    英/ˈkɒtn/    n. 棉，棉花",
+        "cousin    英/ˈkʌz(ə)n/    n. 堂（表）兄弟/姐妹",
+        "customers    英/ˈkʌstəməz/    n. 客户（customer的复数）",
+        "dancing    英/ˈdɑːnsɪŋ/    n. 跳舞",
+        "data    英/ˈdeɪtə/    n. 数据，资料",
+        "decorations    /ˌdekəˈreɪʃənz/    n. 装饰品（decoration 的复数）",
+        "density    英/ˈdensəti/    n. 稠密，密集",
+        "deposit    英/dɪˈpɒzɪt/    n. 押金，存款；v. 放下，放置",
+        "desert    英/ˈdezət/    n. 沙漠，荒漠",
+        "desk    英/desk/    n. 书桌，办公桌，写字台",
+        "detail    英/ˈdiːteɪl/    n. 细节，细微之处",
+        "directions    英/dəˈrekʃ(ə)nz/    n. 方向",
+        "director    英/dəˈrektə(r); daɪˈrektə(r)/    n. 导演",
+        "discount    英/ˈdɪskaʊnt/    n. 减价，折扣",
+        "discussion    英/dɪˈskʌʃ(ə)n/    n. 讨论",
+        "dismiss    英/dɪsˈmɪs/    v. 开除，解雇",
+        "display    英/dɪˈspleɪ/    v. 展示，陈列",
+        "distribution    英/ˌdɪstrɪˈbjuːʃn/    n. 分发",
+        "dolphins    英/ˈdɒlfɪnz/    n. 海豚",
+        "door    英/dɔː(r)/    n. 门",
+        "double    英/ˈdʌb(ə)l/    adj. 两倍的，双的",
+        "driving    英/ˈdraɪvɪŋ/    adj. 推动的，强有力的",
+        "drum    英/drʌm/    n. 鼓",
+        "dust    英/dʌst/    n. 沙尘",
+        "eagle    英/ˈiːɡ(ə)l/    n. 鹰，雕",
+        "earth    英/ɜːθ/    n. 地球，世界",
+        "economy    英/ɪˈkɒnəmi/    n. 经济",
+        "education    英/ˌedʒuˈkeɪʃ(ə)n/    n. 教育",
+        "efficiency    英/ɪˈfɪʃ(ə)nsi/    n. 效率，效能",
+        "egg    英/eɡ/    n. （鸟类的）卵，蛋",
+        "electronic    英/ɪˌlekˈtrɒnɪk/    adj. 电子的，电子学的",
+        "end    英/end/    n. 末尾，最后部分",
+        "engine    英/ˈendʒɪn/    n. 发动机，引擎",
+        "engineers    /ˌendʒɪˈnɪəz/    n. 工程师",
+        "Europe    英/ˈjʊərəp/    n. 欧洲",
+        "evolution    英/ˌiːvəˈluːʃ(ə)n/    n. 进化",
+        "external    英/ɪkˈstɜːn(ə)l/    adj. 外部的，外面的",
+        "extinct    英/ɪkˈstɪŋkt/    adj. 灭绝的",
+        "fat    英/fæt/    adj. 肥的，肥胖的",
+        "fight    英/faɪt/    v. 与……作斗争，坚决反对",
+        "flat    英/flæt/    adj. 平的，水平的",
+        "flower    英/ˈflaʊə(r)/    n. 花，开花植物",
+        "fluids    /ˈfluːɪdz/    n. 流体（fluid的复数）",
+        "fog    英/fɒɡ/    n. 雾",
+        "foundation    英/faʊnˈdeɪʃ(ə)n/    n. 地基，基础",
+        "frequency    英/ˈfriːkwənsi/    n. 频率",
+        "frog    英/frɒɡ/    n. 蛙，青蛙",
+        "fruit    英/fruːt/    n. 水果",
+        "fur    英/fɜː(r)/    n. 毛皮；皮",
+        "gallery    英/ˈɡæləri/    n. 美术馆，画廊",
+        "game    英/ɡeɪm/    n. 游戏，比赛",
+        "gas    英/ɡæs/    n. 气体",
+        "government    英/ˈɡʌvənmənt/    n. 政府，内阁",
+        "grammar    英/ˈɡræmə(r)/    n. 语法，文法",
+        "green    英/ɡriːn/    adj. 绿色的",
+        "guess    英/ɡes/    v. 猜测，估计",
+        "half    英/hɑːf/    n. 一半，二分之一",
+        "handle    英/ˈhænd(ə)l/    v. 拿",
+        "hearing    英/ˈhɪərɪŋ/    n. 听力，听觉",
+        "heater    英/ˈhiːtə(r)/    n. 加热器",
+        "high    英/haɪ/    adj. 高的",
+        "higher    英/ˈhaɪə(r)/    adj. 更高的（high 的比较级）",
+        "honey    英/ˈhʌni/    n. 蜂蜜",
+        "horse    英/hɔːs/    n. 马",
+        "hostel    英/ˈhɒst(ə)l/    n. 旅社，招待所",
+        "human    英/ˈhjuːmən/    adj. 人的，人类的",
+        "humor    英/ˈhjuːmə(r)/    n. 幽默，诙谐",
+        "ideas    /aɪˈdiə/    n. 想法（idea的复数）",
+        "identification    英/aɪˌdentɪfɪˈkeɪʃ(ə)n/    n. 辨认，识别",
+        "images    英/ˈɪmɪdʒɪz/    n. 形象；图像（image的复数）",
+        "immigration    英/ˌɪmɪˈɡreɪʃ(ə)n/    n. 移民",
+        "impact    英/ˈɪmpækt/    n. 撞击，冲击力",
+        "imported    英/ɪmˈpɔː(r)tɪd/    adj. 输入的，进口的",
+        "income    英/ˈɪnkʌm/    n. 收入，收益",
+        "industry    英/ˈɪndəstri/    n. 工业，生产制造",
+        "intermediate    英/ˌɪntəˈmiːdiət/    adj. 居中的，中间的",
+        "jeans    英/dʒiːnz/    n. 牛仔裤",
+        "Judo    英/ˈdʒuːdəʊ/    n. （日）柔道",
+        "June    英/dʒuːn/    n. 六月",
+        "knife    英/naɪf/    n. 餐刀",
+        "lanes    英/leɪnz/    n. 线路，跑道（lane复数形式）",
+        "learn    英/lɜːn/    v. 学习，学会",
+        "learning    英/ˈlɜːnɪŋ/    n. 学习",
+        "leaves    英/liːvz/    n. 树叶；花瓣（leaf的复数）",
+        "leg    英/leɡ/    n. 腿",
+        "listening    英/ˈlɪsənɪŋ/    v. 听",
+        "lists    英/ˈlɪsts/    n. 一览表, 目录, 名单（list的复数）",
+        "locker    英/ˈlɒkə(r)/    n. 锁柜，寄物柜",
+        "machines    英/məˈʃiːnz/    n. 机器（machine 的复数）",
+        "main    英/meɪn/    adj. 主要的，最大的",
+        "mapping    英/ˈmæpɪŋ/    v. 绘图；筹划（map的ing形式）",
+        "medication    英/ˌmedɪˈkeɪʃn/    n. 药物，药品",
+        "memory    英/ˈmeməri/    n. 记忆力，记性",
+        "message    英/ˈmesɪdʒ/    n. 消息；预言；启示",
+        "microphone    英/ˈmaɪkrəfəʊn/    n. 扩音器，麦克风",
+        "microscope    英/ˈmaɪkrəskəʊp/    n. 显微镜",
+        "modern    英/ˈmɒd(ə)n/    adj. 近代的，现代的",
+        "monthly    英/ˈmʌnθli/    adj. 每月的，每月一次的",
+        "morning    英/ˈmɔːnɪŋ/    n. 早晨",
+        "motivation    英/ˌməʊtɪˈveɪʃ(ə)n/    n. 动力，诱因",
+        "natural    英/ˈnætʃ(ə)rəl/    adj. 天然的，非人为的",
+        "neck    英/nek/    n. 颈项，脖子",
+        "note    英/nəʊt/    n. 短笺，便条",
+        "nutrition    英/njuˈtrɪʃ(ə)n/    n. 营养，滋养",
+        "nylon    英/ˈnaɪlɒn/    n. 尼龙",
+        "Opera    英/ˈɒprə/    n. 歌剧演出，歌剧表演",
+        "orientation    英/ˌɔːriənˈteɪʃ(ə)n/    n. 目标，定位",
+        "outdoor    英/ˈaʊtdɔː(r)/    adj. 户外的，露天的",
+        "outline    英/ˈaʊtlaɪn/    n. 轮廓，外形",
+        "overfill    英/ˌəʊvəˈfɪl/    vt. 把……装得溢出",
+        "painting    英/ˈpeɪntɪŋ/    n. 画，绘画作品",
+        "party    英/ˈpɑːti/    n. 聚会，派对",
+        "pay    英/peɪ/    v. 支付，付",
+        "pest    英/pest/    n. 害虫，有害动物",
+        "petrol    英/ˈpetrəl/    n. 汽油",
+        "picnic    英/ˈpɪknɪk/    n. 野餐，野餐活动",
+        "pilots    /ˈpaɪləts/    n. 飞行员（pilot 的复数）",
+        "pizza    英/ˈpiːtsə/    n. 比萨饼",
+        "plan    英/plæn/    n. 计划；规划",
+        "planet    英/ˈplænɪt/    n. 行星",
+        "planning    英/ˈplænɪŋ/    n. 规划",
+        "plates    英/pleɪts/    n. 盘子（plate 的复数）",
+        "pleasure    英/ˈpleʒə(r)/    n. 快乐，满足，欣慰",
+        "poetry    英/ˈpəʊətri/    n. 诗歌",
+        "police    英/pəˈliːs/    n. 警察部门; 警方; 警察",
+        "polluted    英/pəˈluːtɪd/    adj. 受污染的",
+        "population    英/ˌpɒpjuˈleɪʃ(ə)n/    n. 人口，人口数量",
+        "powder    英/ˈpaʊdə(r)/    n. 粉，粉末",
+        "presentation    英/ˌprez(ə)nˈteɪʃ(ə)n/    n. 简述报告；赠送(仪式)",
+        "pressure    英/ˈpreʃə(r)/    n. 压力，挤压",
+        "prices    英/praisiz/    n. 价格（price 的复数）",
+        "prison    英/ˈprɪz(ə)n/    n. 监狱，牢房",
+        "procedure    英/prəˈsiːdʒə(r)/    n. 手续，步骤",
+        "profit    英/ˈprɒfɪt/    n. 利润，盈利",
+        "promotion    英/prəˈməʊʃ(ə)n/    n. 提拔，晋升",
+        "proof    英/pruːf/    n. 证明，证据",
+        "protected    英/prəˈtektɪd/    adj. 受保护的",
+        "protection    英/prəˈtekʃ(ə)n/    n. 保护，防护",
+        "protein    英/ˈprəʊtiːn/    n. 蛋白质",
+        "public    英/ˈpʌblɪk/    adj. 公众的，大众的",
+        "pump    英/pʌmp/    n. 泵，抽水机",
+        "purpose    英/ˈpɜːpəs/    n. 目的，意图",
+        "quiet    英/ˈkwaɪət/    adj. 轻声的，安静的",
+        "rabbit    /ˈræbɪt/    n. 兔",
+        "race    英/reɪs/    n. 赛跑，速度竞赛",
+        "radar    英/ˈreɪdɑː(r)/    n. 雷达，无线电探测系统",
+        "rainfall    英/ˈreɪnfɔːl/    n. 降雨",
+        "reactions    /riˈækʃənz/    n. 反应（reaction 的复数）",
+        "recording    英/rɪˈkɔːdɪŋ/    n. 录音，录像",
+        "related    英/rɪˈleɪtɪd/    adj. 相关的，有联系的",
+        "reliable    英/rɪˈlaɪəb(ə)l/    adj. 可靠的，可信赖的",
+        "respect    英/rɪˈspekt/    n. 尊敬，敬重",
+        "rubber    英/ˈrʌbə(r)/    n. 橡胶，合成橡胶",
+        "rubbish    英/ˈrʌbɪʃ/    n. 垃圾，废弃物",
+        "sample    英/ˈsɑːmp(ə)l/    n. 样本，样品",
+        "sculptures    英/ˈskʌlptʃəz/    n. 雕塑（sculpture 的复数）",
+        "sea    英/siː/    n. 海洋",
+        "share    英/ʃeə(r)/    v. 共享，合用",
+        "sheep    英/ʃiːp/    n. 羊，绵羊",
+        "sheet    英/ʃiːt/    n. 床单，被单",
+        "signal    英/ˈsɪɡnəl/    n. 信号，暗号",
+        "signature    英/ˈsɪɡnətʃə(r)/    n. 签名，署名",
+        "smoke    英/sməʊk/    n. 烟，烟雾",
+        "smooth    英/smuːð/    adj. （表面）光滑的，平坦的",
+        "society    英/səˈsaɪəti/    n. 社会",
+        "south    英/saʊθ/    n. 南，南方",
+        "stars    英/stɑ:z/    n. 星星，明星（star 的复数形式）",
+        "still    英/stɪl/    adv. 还，依旧",
+        "structure    英/ˈstrʌktʃə(r)/    n. 结构，构造",
+        "survey    英/ˈsɜːveɪ/    n. 民意调查，民意测验",
+        "swim    英/swɪm/    v. 游泳",
+        "table    英/ˈteɪb(ə)l/    n. 桌子，台子",
+        "tank    英/tæŋk/    n. 箱，罐，缸",
+        "teenagers    /ˈtiːneɪdʒəz/    n. 青少年（teenager 的复数）",
+        "television    英/ˈtelɪvɪʒ(ə)n/    n. 电视，电视机",
+        "theater    英/ˈθɪətə(r)/    n. 电影院，戏院，剧场",
+        "timber    英/ˈtɪmbə(r)/    n. 木材，原木",
+        "total    英/ˈtəʊt(ə)l/    adj. 总的，全部的",
+        "tour    英/tʊə(r)/    n. 旅行，旅游",
+        "tourism    英/ˈtʊərɪzəm/    n. 旅游业，观光业",
+        "train    英/treɪn/    n. 火车，列车",
+        "transportation    英/ˌtrænspɔːˈteɪʃ(ə)n/    n. 运输，运送",
+        "tunnel    英/ˈtʌn(ə)l/    n. 隧道，地道",
+        "TV    英/ˌtiːˈviː/    abbr. 电视（television）",
+        "twin    英/twɪn/    n. 双胞胎之一，孪生儿之一",
+        "umbrella    英/ʌmˈbrelə/    n. 伞，雨伞，阳伞",
+        "unnatural    英/ʌnˈnætʃrəl/    adj. 不自然的",
+        "urban    英/ˈɜːbən/    adj. 城市的，城镇的",
+        "vitamins    英/ˈvɪtəmɪnz/    n. 维生素（vitamin的复数）",
+        "vocabulary    英/vəˈkæbjələri/    n. 词汇",
+        "watering    英/ˈwɔːtərɪŋ/    n. 洒水，浇水；(指动物)饮水",
+        "Wednesday    英/ˈwenzdeɪ/    n. 星期三",
+        "write    英/raɪt/    v. 写作，编写",
+        "writing    英/ˈraɪtɪŋ/    n. 笔迹、作品；v. 书写（write的ing形式）",
+        "young    英/jʌŋ/    adj. 幼小的，年轻的",
+        "packaging    英/ˈpækɪdʒɪŋ/    n. 包装材料，外包装",
+        "sculpture    英/ˈskʌlptʃə(r)/    n. 雕像，雕塑作品",
+        "status    英/ˈsteɪtəs/    n. 法律地位（或身份）",
+        "liquid    英/ˈlɪkwɪd/    n. 液体，液态物",
+        "oven    英/ˈʌv(ə)n/    n. 烤炉，烤箱",
+        "potato    英/pəˈteɪtəʊ/    n. 马铃薯，土豆，洋芋",
+        "recycling    英/ˌriːˈsaɪklɪŋ/    n. 回收利用",
+        "seat    英/siːt/    n. 座位",
+        "apology    英/əˈpɒlədʒi/    n. 道歉",
+        "context    英/ˈkɒntekst/    n. 背景，环境",
+        "footprint    英/ˈfʊtprɪnt/    n. 脚印，足迹",
+        "measurement    英/ˈmeʒəmənt/    n. 测量结果",
+        "danger    英/ˈdeɪndʒə(r)/    n. 危险，风险",
+        "area    英/ˈeəriə/    n. 地区，区域",
+        "hall    英/hɔːl/    n. 礼堂，大厅",
+        "center    英/ˈsentə(r)/    n. 中间，中心",
+        "railway    英/ˈreɪlweɪ/    n. 铁路，铁道",
+        "video    英/ˈvɪdiəʊ/    n. 录像",
+        "celebration    英/ˌselɪˈbreɪʃn/    n. 庆典，庆祝活动",
+        "boat    英/bəʊt/    n. 小船",
+        "swan    英/swɒn/    n. 天鹅",
+        "project    英/ˈprɒdʒekt; prəˈdʒekt/    n. 项目，计划",
+        "room    英/ruːm/    n. 房间，室",
+        "black    英/blæk/    adj. 黑的，黑色的",
+        "soccer    英/ˈsɒkə(r)/    n. 英式足球，足球",
+        "season    英/ˈsiːz(ə)n/    n. 季节",
+        "sticker    英/ˈstɪkə(r)/    n. 贴纸",
+        "welfare    英/ˈwelfeə(r)/    n. 幸福，安康",
+        "crime    英/kraɪm/    n. 罪，罪行",
+        "lighting    英/ˈlaɪtɪŋ/    n. 照明",
+        "telephone    英/ˈtelɪfəʊn/    n. 电话",
+        "voice    英/vɔɪs/    n. 嗓音，说话声",
+        "building    英/ˈbɪldɪŋ/    n. 建筑物，房屋",
+        "fish    英/fɪʃ/    n. 鱼",
+        "break    英/breɪk/    v. 打破，折断",
+        "blue    英/bluː/    adj. 蓝色的",
+        "port    英/pɔːt/    n. 港口，避风港",
+        "damage    英/ˈdæmɪdʒ/    n. 损坏，损失",
+        "combination    英/ˌkɒmbɪˈneɪʃ(ə)n/    n. 合作, 结合",
+        "health    英/helθ/    n. 身体状况",
+        "friend    英/frend/    n. 朋友，友人",
+        "team    英/tiːm/    n. 队，小组",
+        "clean    英/kliːn/    adj. 洁净的，干净的",
+        "North    英/nɔːθ/    n. 北，北方",
+        "Northern    英/ˈnɔːðən/    adj. 北方的，北部的",
+        "temple    英/ˈtemp(ə)l/    n. 庙宇，寺院",
+        "estimate    英/ˈestɪmət; ˈestɪmeɪt/    v. 估计",
+        "parking    英/ˈpɑːkɪŋ/    n. 停车，泊车",
+        "budget    英/ˈbʌdʒɪt/    n. 预算",
+        "source    英/sɔːs/    n. 来源，出处",
+        "corn    英/kɔːn/    n. 谷物，谷粒",
+        "drugs    英/drʌɡz/    n. 毒品，药物（drug的复数）",
+        "peanuts    英/ˈpiːnʌts/    n. 花生（peanut的复数）",
+        "gym    英/dʒɪm/    n. 体育馆，健身房",
+        "Scotland    英/ˈskɒtlənd/    n. 苏格兰",
+        "agency    英/ˈeɪdʒənsi/    n. 代理行，经销处",
+        "simple    英/ˈsɪmp(ə)l/    adj. 简单的，简明的",
+        "white    英/waɪt/    adj. 白色的",
+        "babies        n. 婴儿（baby 的复数）",
+        "storage    英/ˈstɔːrɪdʒ/    n. 储存，贮藏",
+        "sunlight    英/ˈsʌnlaɪt/    n. 阳光，日光",
+        "magazine    英/ˌmæɡəˈziːn/    n. 杂志，期刊",
+        "clothes    英/kləʊðz/    n. 衣服，衣物",
+        "photography    英/fəˈtɒɡrəfi/    n. 摄影，摄影术",
+        "street    英/striːt/    n. 街道",
+        "guest    英/ɡest/    n. 客人",
+        "number    英/ˈnʌmbə(r)/    n. 数字",
+        "Road    英/rəʊd/    n. 路，公路，马路，街",
+        "student    英/ˈstjuːd(ə)nt/    n. 学生",
+        "hot    英/hɒt/    adj. 热的，高温的",
+        "window    英/ˈwɪndəʊ/    n. 窗，窗玻璃",
+        "book    英/bʊk/    n. 书，书籍",
+        "bottle    英/ˈbɒt(ə)l/    n. 瓶子",
+        "confidence    英/ˈkɒnfɪdəns/    n. 自信，信心",
+        "net    英/net/    n. 网，网状物",
+        "ticket    英/ˈtɪkɪt/    n. 票，入场券",
+        "rate    英/reɪt/    n. 速度，速率",
+        "line    英/laɪn/    n. 线，线条",
+        "wooden    英/ˈwʊdn/    adj. 木制的",
+        "next    英/nekst/    adj. 下一个的，接下来的",
+        "Living    英/ˈlɪvɪŋ/    adj. 活着的，活的",
+        "early    英/ˈɜːli/    adj. 早期的，初期的",
+        "free    英/friː/    adj. 免费的",
+        "national    英/ˈnæʃ(ə)nəl/    adj. 国家的，全国的",
+        "board    英/bɔːd/    n. 板，木板",
+        "bar    英/bɑː(r)/    n. 酒吧",
+        "department    英/dɪˈpɑːtmənt/    n. （组织或机构中的）部门",
+        "teaching    英/ˈtiːtʃɪŋ/    n. 教学工作，授课",
+        "coin    英/kɔɪn/    n. 硬币，金属货币",
+        "bone    英/bəʊn/    n. 骨，骨头",
+        "seminar    英/ˈsemɪnɑː(r)/    n. 研讨会，培训会",
+        "program    英/ˈprəʊɡræm/    n. 程序；计划；大纲",
+        "wolf    英/wʊlf/    n. 狼",
+        "sell    英/sel/    v. 出让，转让",
+        "first    英/fɜːst/    det. 第一位的，最先的",
+        "walk    英/wɔːk/    v. 走，步行",
+        "paint    英/peɪnt/    n. 油漆，涂料",
+        "tutorials        n. 教程（tutorial的复数）",
+        "pack    英/pæk/    v. （把……）打包，收拾（行李）",
+        "grocery    英/ˈɡrəʊsəri/    n. 食品杂货店，食品杂货业",
+        "farmers        n. 农民（farmer 的复数）",
+        "May    英/meɪ/    n. 五月",
+        "bucket    英/ˈbʌkɪt/    n. 桶",
+        "focus    英/ˈfəʊkəs/    n. 重点，中心点",
+        "noisy    英/ˈnɔɪzi/    adj. 聒噪的",
+        "standard    英/ˈstændəd/    n. 标准，水平",
+        "advance    英/ədˈvɑːns/    v. （使）前进，（使）向前移动",
+        "exercise    英/ˈeksəsaɪz/    n. 运动，锻炼",
+        "knee    英/niː/    n. 膝盖，膝关节",
+        "stick    英/stɪk/    n. 手杖，拐杖；木条；v. 粘住",
+        "drink    英/drɪŋk/    v. 喝，饮",
+        "fossil    英/ˈfɒs(ə)l/    n. 化石",
+        "marketing    英/ˈmɑːkɪtɪŋ/    n. 促销，营销",
+        "resources    英/rɪˈsɔːsɪz/    n. 资源",
+        "carpet    英/ˈkɑːpɪt/    n. 地毯",
+        "century    英/ˈsentʃəri/    n. 世纪",
+        "reputation    英/ˌrepjuˈteɪʃ(ə)n/    n. 名誉，名声",
+        "motor    英/ˈməʊtə(r)/    n. 发动机，马达",
+        "priority    英/praɪˈɒrəti/    n. 优先事项，最重要的事",
+        "cold    英/kəʊld/    adj. 冷的，凉的"
+    ];
+
+    function parseRawLines(lines) {
+        const vocab = [];
+        for (let line of lines) {
+            line = line.trim();
+            if (!line) continue;
+            let parts = line.split(/\s{2,}/);
+            if (parts.length >= 2) {
+                let word = parts[0].trim();
+                let rest = parts.slice(1).join(' ');
+                let definition = rest.replace(/英\/[^/]+\//, '').trim();
+                if (!definition) definition = rest;
+                vocab.push({ word: word, definition: definition });
+            } else {
+                let firstSpace = line.indexOf(' ');
+                if (firstSpace > 0) {
+                    let word = line.slice(0, firstSpace).trim();
+                    let def = line.slice(firstSpace).replace(/英\/[^/]+\//, '').trim();
+                    vocab.push({ word, definition: def || word });
+                }
+            }
+        }
+        return vocab;
+    }
+
+    const fullVocabulary = parseRawLines(rawWordLines);
+    console.log(`Loaded ${fullVocabulary.length} words`);
+
+    // Split into 30-day groups (30 words each)
+    const daysPlan = [];
+    for (let i = 0; i < fullVocabulary.length; i += 30) {
+        daysPlan.push(fullVocabulary.slice(i, i + 30));
+    }
+    while(daysPlan.length < 30) daysPlan.push([]);  // ensure 30 days
+
+    // --- Speech synthesis with Chrome compatibility ---
+    let availableVoices = [];
+    const voiceSelect = document.getElementById('voiceSelect');
+    const voiceStatusSpan = document.getElementById('voiceStatus');
+    
+    function loadVoices() {
+        let voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length) {
+            let enVoices = voices.filter(v => v.lang.startsWith('en'));
+            if (enVoices.length === 0) enVoices = voices;
+            availableVoices = enVoices;
+            voiceSelect.innerHTML = '';
+            availableVoices.forEach((v, idx) => {
+                let opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `${v.name} (${v.lang})`;
+                voiceSelect.appendChild(opt);
+            });
+            if (availableVoices.length) voiceSelect.selectedIndex = 0;
+            voiceStatusSpan.textContent = '✅ Voice ready';
+        } else {
+            voiceStatusSpan.textContent = '⚠️ No voices yet, click test';
+        }
+    }
+    if (window.speechSynthesis) {
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    } else {
+        voiceStatusSpan.textContent = '❌ Speech not supported';
+    }
+
+    function speakText(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        const idx = parseInt(voiceSelect.value);
+        if (availableVoices.length && !isNaN(idx) && availableVoices[idx]) {
+            utterance.voice = availableVoices[idx];
+        }
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // --- Dictation State ---
+    let currentQuiz = [];
+    let userAnswers = [];
+    let currentIdx = 0;
+    let timerInterval = null;
+    let countdown = 10;
+    let waitingForNext = false;
+    let selectedDay = 1;          // currently selected day for preview/start
+    let startLoading = false;
+
+    function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[char]));
+    }
+
+    function renderDayStatus(message, type = 'info') {
+        const colors = {
+            info: '#29465f',
+            success: '#166534',
+            warning: '#b45309',
+            error: '#b42318'
+        };
+        dayStatusDisplay.innerHTML = `<div style="padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid #dbe5ef;color:${colors[type] || colors.info};">${message}</div>`;
+    }
+
+    function renderAttemptSummary(summary) {
+        if (!summary) return '';
+        return `今天 Day ${summary.day} 已完成：正确 ${summary.correctCount}/${summary.totalCount}，正确率 ${summary.accuracy}% ，复习词 ${summary.reviewCount} 个。完成时间：${new Date(summary.completedAt).toLocaleString()}`;
+    }
+
+    async function fetchDaySession(day) {
+        const response = await fetch(`/api/dictation/session?day=${day}`, {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+        const data = await response.json().catch(() => ({}));
+        return { response, data };
+    }
+
+    async function refreshSelectedDayStatus() {
+        try {
+            const { response, data } = await fetchDaySession(selectedDay);
+            if (!response.ok) {
+                renderDayStatus('暂时无法读取今天的听写状态。', 'warning');
+                selectedDaySummary = null;
+                return;
+            }
+            selectedDaySummary = data.summary || null;
+            if (data.completed && data.summary) {
+                renderDayStatus(`📌 ${renderAttemptSummary(data.summary)}`, 'success');
+            } else {
+                renderDayStatus(`Day ${selectedDay} 今日还未完成，可以开始听写。`, 'info');
+            }
+        } catch (error) {
+            selectedDaySummary = null;
+            renderDayStatus('网络异常，暂时无法读取今天的听写状态。', 'warning');
+        }
+    }
+
+    async function requestQuiz(day) {
+        const response = await fetch('/api/dictation/quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({ day, daysPlan })
+        });
+        const data = await response.json().catch(() => ({}));
+        return { response, data };
+    }
+
+    async function submitQuiz(day, items) {
+        const response = await fetch('/api/dictation/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({ day, items })
+        });
+        const data = await response.json().catch(() => ({}));
+        return { response, data };
+    }
+
+    function stopTimerAndSpeech() {
+        if (timerInterval) clearInterval(timerInterval);
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        timerInterval = null;
+    }
+
+    function updateTimerUI(sec) {
+        let percent = (sec / 10) * 100;
+        document.getElementById('timerFill').style.width = `${percent}%`;
+        document.getElementById('timerLabel').innerText = `⏱️ ${sec.toFixed(1)} sec left`;
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        countdown = 10;
+        updateTimerUI(countdown);
+        timerInterval = setInterval(() => {
+            if (countdown <= 0.1) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                if (!waitingForNext) autoSubmit();
+            } else {
+                countdown -= 0.1;
+                updateTimerUI(countdown);
+            }
+        }, 100);
+    }
+
+    function autoSubmit() {
+        if (waitingForNext) return;
+        recordCurrentAnswer();
+        updateScoreDisplay();
+        moveToNext();
+    }
+
+    function recordCurrentAnswer() {
+        const input = document.getElementById('spellingInput').value.trim();
+        const currentWord = currentQuiz[currentIdx];
+        const correctWord = currentWord.word;
+        const isCorrect = input.toLowerCase() === correctWord.toLowerCase();
+        userAnswers[currentIdx] = {
+            userInput: input,
+            isCorrect,
+            word: correctWord,
+            definition: currentWord.definition,
+            sourceDay: currentWord.sourceDay || selectedDay,
+            isReview: Boolean(currentWord.isReview)
+        };
+    }
+
+    function updateScoreDisplay() {
+        let correctCount = userAnswers.filter(a => a && a.isCorrect).length;
+        document.getElementById('liveCorrect').innerText = `✓ ${correctCount} correct`;
+    }
+
+    function moveToNext() {
+        stopTimerAndSpeech();
+        if (currentIdx + 1 < currentQuiz.length) {
+            currentIdx++;
+            loadCurrentWord();
+        } else {
+            finishDictation();
+        }
+    }
+
+    function loadCurrentWord() {
+        waitingForNext = false;
+        const wordObj = currentQuiz[currentIdx];
+        document.getElementById('wordCounter').innerText = `Word ${currentIdx+1} / ${currentQuiz.length}`;
+        const inputField = document.getElementById('spellingInput');
+        inputField.value = '';
+        inputField.focus();
+        speakText(wordObj.word);
+        startTimer();
+        updateScoreDisplay();
+        document.getElementById('warningMsg').innerText = '';
+    }
+
+    async function finishDictation() {
+        stopTimerAndSpeech();
+        document.getElementById('quizScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+        const total = userAnswers.length;
+        const correct = userAnswers.filter(a => a && a.isCorrect).length;
+        const percent = Math.round((correct/total)*100);
+        document.getElementById('accuracyDisplay').innerHTML = `🎯 Accuracy: ${correct} / ${total} (${percent}%)`;
+        const errors = userAnswers.filter(a => a && !a.isCorrect);
+        saveStatusDisplay.textContent = '正在保存本次结果并同步错题库...';
+        const errorContainer = document.getElementById('errorListContainer');
+        if (errors.length === 0) errorContainer.innerHTML = '<div>✨ Perfect! No mistakes.</div>';
+        else {
+            errorContainer.innerHTML = errors.map(e => `
+                <div class="error-item">
+                    <div><strong>✘ ${escapeHtml(e.word)}</strong> (your spelling: "${escapeHtml(e.userInput)}")</div>
+                    <div class="error-def">📖 ${e.definition}</div>
+                </div>
+            `).join('');
+        }
+
+        try {
+            const { response, data } = await submitQuiz(selectedDay, userAnswers);
+            if (!response.ok) {
+                saveStatusDisplay.textContent = data.error || '结果保存失败，请稍后刷新页面确认。';
+                return;
+            }
+            lastSavedSummary = data.summary || null;
+            selectedDaySummary = lastSavedSummary;
+            saveStatusDisplay.textContent = '本次结果已保存，错题库已同步更新。';
+            await refreshSelectedDayStatus();
+        } catch (error) {
+            saveStatusDisplay.textContent = '网络异常，结果可能未成功保存，请刷新页面确认。';
+        }
+    }
+
+    async function startDictationForDay(day) {
+        if (startLoading) return;
+        stopTimerAndSpeech();
+        selectedDay = day;
+        startLoading = true;
+        document.getElementById('warningMsg').innerText = '';
+
+        try {
+            const { response: sessionResponse, data: sessionData } = await fetchDaySession(day);
+            if (!sessionResponse.ok) {
+                alert(sessionData.error || '无法读取今天的听写状态。');
+                return;
+            }
+            if (sessionData.completed) {
+                selectedDaySummary = sessionData.summary || null;
+                renderDayStatus(`📌 ${renderAttemptSummary(sessionData.summary)}`, 'success');
+                alert('今天这个学习日已经完成，不能重复开始。');
+                return;
+            }
+
+            const { response, data } = await requestQuiz(day);
+            if (!response.ok) {
+                alert(data.error || '生成题目失败，请稍后重试。');
+                return;
+            }
+            const testWords = Array.isArray(data.words) ? data.words : [];
+            if (testWords.length === 0) { alert("No words for this day."); return; }
+            currentQuiz = testWords;
+            lastSavedSummary = null;
+            saveStatusDisplay.textContent = '';
+        } finally {
+            startLoading = false;
+        }
+
+        userAnswers = new Array(currentQuiz.length);
+        currentIdx = 0;
+        waitingForNext = false;
+        document.getElementById('setupScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.add('hidden');
+        document.getElementById('quizScreen').classList.remove('hidden');
+        const newCount = currentQuiz.filter(item => !item.isReview).length;
+        const reviewCount = currentQuiz.filter(item => item.isReview).length;
+        document.getElementById('modeIndicator').innerHTML = `📆 Day ${day} (${newCount} new + ${reviewCount} review)`;
+        loadCurrentWord();
+    }
+
+    function restartSameDay() {
+        document.getElementById('resultScreen').classList.add('hidden');
+        document.getElementById('setupScreen').classList.remove('hidden');
+        refreshSelectedDayStatus();
+    }
+
+    // --- Modal for word list preview ---
+    const modal = document.getElementById('wordListModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalList = document.getElementById('modalWordList');
+    const modalStartBtn = document.getElementById('modalStartDictationBtn');
+    let currentPreviewDay = 1;
+
+    function showWordListForDay(day) {
+        currentPreviewDay = day;
+        const words = daysPlan[day-1] || [];
+        modalTitle.innerText = `Day ${day} - ${words.length} New Words`;
+        modalList.innerHTML = '';
+        words.forEach(w => {
+            const item = document.createElement('div');
+            item.className = 'word-list-item';
+            item.innerHTML = `<span>${w.word}</span><span style="font-size:0.7rem; color:#4a627a;">${w.definition.substring(0, 35)}</span>`;
+            modalList.appendChild(item);
+        });
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    modalStartBtn.addEventListener('click', () => {
+        closeModal();
+        startDictationForDay(currentPreviewDay);
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // "View Today's New Words" button: shows words of currently selected day
+    document.getElementById('viewSelectedDayWordsBtn').addEventListener('click', () => {
+        showWordListForDay(selectedDay);
+    });
+
+    // --- Generate day buttons: click shows word list, selects that day ---
+    const container = document.getElementById('daysButtonContainer');
+    for (let i = 1; i <= 30; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'day-btn';
+        btn.innerText = `Day ${i}`;
+        btn.addEventListener('click', (function(day) {
+            return () => {
+                // update active day highlight
+                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active-day'));
+                btn.classList.add('active-day');
+                selectedDay = day;
+                refreshSelectedDayStatus();
+                showWordListForDay(day);
+            };
+        })(i));
+        container.appendChild(btn);
+    }
+
+    // Set default active day to Day 1
+    const firstDayBtn = container.querySelector('.day-btn');
+    if (firstDayBtn) firstDayBtn.classList.add('active-day');
+
+    // Test voice button
+    document.getElementById('testVoiceBtn').addEventListener('click', () => {
+        speakText("Hello, this is your selected voice. Ready for dictation.");
+    });
+
+    // Attach global event handlers
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (waitingForNext) return;
+        if (currentIdx < currentQuiz.length) {
+            stopTimerAndSpeech();
+            recordCurrentAnswer();
+            updateScoreDisplay();
+            moveToNext();
+        }
+    });
+    document.getElementById('speakBtn').addEventListener('click', () => {
+        if (currentQuiz.length && currentIdx < currentQuiz.length) {
+            speakText(currentQuiz[currentIdx].word);
+        }
+    });
+    document.getElementById('restartExamBtn').addEventListener('click', () => {
+        restartSameDay();
+    });
+    document.getElementById('spellingInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !waitingForNext && currentIdx < currentQuiz.length) {
+            e.preventDefault();
+            stopTimerAndSpeech();
+            recordCurrentAnswer();
+            updateScoreDisplay();
+            moveToNext();
+        }
+    });
+
+    // Update info panel
+    document.getElementById('vocabStatsDisplay').innerHTML = `✔️ Total built-in: ${fullVocabulary.length} words.<br>✔️ Split into 30 days (≈30 words/day).<br>✔️ Each test: 30 fixed new words + up to 20 review words.<br>✔️ <strong>Click any Day button</strong> to see its 30 new words, then press <strong>Start Dictation</strong> in the popup.<br>✔️ Review words are prioritized from this student's wrong-word bank.`;
+
+    logoutBtn.addEventListener('click', handleLogout);
+
+    fetchSession();
+</script>
+</body>
+</html>
