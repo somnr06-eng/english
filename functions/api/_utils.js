@@ -77,6 +77,30 @@ export async function verifySession(token, secret) {
     return expected === signature ? studentId : null;
 }
 
+export async function diagnoseSessionToken(token, secret) {
+    if (!token) {
+        return { ok: false, reason: 'missing_cookie' };
+    }
+    if (!token.includes('.')) {
+        return { ok: false, reason: 'invalid_cookie_format' };
+    }
+
+    const dotIndex = token.indexOf('.');
+    const studentId = token.slice(0, dotIndex);
+    const signature = token.slice(dotIndex + 1);
+
+    if (!studentId || !signature) {
+        return { ok: false, reason: 'invalid_cookie_format' };
+    }
+
+    const expected = await sha256(`${studentId}.${secret}`);
+    if (expected !== signature) {
+        return { ok: false, reason: 'signature_mismatch', studentId };
+    }
+
+    return { ok: true, studentId };
+}
+
 export async function requireStudent(context) {
     const { request, env } = context;
     if (!env.DB) {
@@ -86,14 +110,14 @@ export async function requireStudent(context) {
         return { error: unauthorized('Session service is not configured.') };
     }
     const cookies = parseCookies(request);
-    const studentId = await verifySession(cookies.session, env.SESSION_SECRET);
-    if (!studentId) {
-        return { error: unauthorized('Not logged in.') };
+    const diagnosis = await diagnoseSessionToken(cookies.session, env.SESSION_SECRET);
+    if (!diagnosis.ok) {
+        return { error: unauthorized(`Not logged in: ${diagnosis.reason}.`) };
     }
 
     const result = await env.DB.prepare(
         'SELECT student_id, name, status FROM students WHERE student_id = ?'
-    ).bind(studentId).first();
+    ).bind(diagnosis.studentId).first();
 
     if (!result || result.status !== 'active') {
         return { error: unauthorized('Student account is unavailable.') };
