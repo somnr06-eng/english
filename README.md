@@ -1,6 +1,6 @@
 # English Dictation Pro
 
-Cloudflare Pages + Functions + D1 实现的英语听写应用。
+Cloudflare Workers + 静态资产 + D1 实现的英语听写应用。
 
 当前版本支持：
 - 多学生账号登录
@@ -13,6 +13,7 @@ Cloudflare Pages + Functions + D1 实现的英语听写应用。
 
 - `index.html`: 登录页
 - `home.html`: 听写主页
+- `worker.js`: Worker 路由入口
 - `functions/api/login.js`: 学生登录
 - `functions/api/session.js`: 登录态查询
 - `functions/api/logout.js`: 退出登录
@@ -51,7 +52,7 @@ npx wrangler d1 execute english-dictation-pro --local --file=seed.sql
 3. 启动本地服务
 
 ```bash
-npx wrangler pages dev . --local --port 8788
+npx wrangler dev --port 8788
 ```
 
 4. 打开浏览器
@@ -71,7 +72,7 @@ npx wrangler pages dev . --local --port 8788
 - 如果某个错题在本次听写中拼写正确，则从该学生错题库中移除
 - 如果再次拼错，则保留在错题库中，并累加错误次数
 
-## 部署到 Cloudflare Pages
+## 部署到 Cloudflare Workers
 
 1. 推送代码到 Git 仓库
 2. 在 Cloudflare Dashboard 连接 Pages 项目

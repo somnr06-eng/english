@@ -1,5 +1,6 @@
 name = "english"
 compatibility_date = "2026-05-03"
+main = "./worker.js"
 
 [[d1_databases]]
 binding = "DB"
@@ -9,3 +10,4 @@ database_id = "a13e7079-323b-43e5-acb2-bba5db2a5ea7"
 [assets]
 directory = "./"
 not_found_handling = "single-page-application"
+binding = "ASSETS"
