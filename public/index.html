@@ -186,6 +186,7 @@
 </div>
 
 <script>
+    const SESSION_STORAGE_KEY = 'english_session_token';
     const studentIdInput = document.getElementById('studentIdInput');
     const passwordInput = document.getElementById('passwordInput');
     const loginBtn = document.getElementById('loginBtn');
@@ -212,11 +213,21 @@
         loginBtn.textContent = loading ? '登录中...' : '登录';
     }
 
+    function buildAuthHeaders(extra = {}) {
+        const token = localStorage.getItem(SESSION_STORAGE_KEY);
+        const headers = { ...extra };
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+        return headers;
+    }
+
     async function ensureLoggedOutView() {
         try {
             const response = await fetch('/api/session', {
                 method: 'GET',
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                headers: buildAuthHeaders()
             });
             const data = await response.json().catch(() => null);
             if (response.ok && data && data.authenticated === true && data.studentId) {
@@ -257,6 +268,9 @@
             if (!response.ok) {
                 showLoginError(data.error || '登录失败，请稍后重试。');
                 return;
+            }
+            if (data.sessionToken) {
+                localStorage.setItem(SESSION_STORAGE_KEY, data.sessionToken);
             }
             passwordInput.value = '';
             window.location.replace('/home.html');

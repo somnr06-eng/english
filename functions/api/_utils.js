@@ -62,6 +62,12 @@ export function parseCookies(request) {
     }, {});
 }
 
+export function readBearerToken(request) {
+    const auth = request.headers.get('authorization') || '';
+    if (!auth.startsWith('Bearer ')) return null;
+    return auth.slice('Bearer '.length).trim() || null;
+}
+
 export async function signSession(studentId, secret) {
     const signature = await sha256(`${studentId}.${secret}`);
     return `${studentId}.${signature}`;
@@ -112,7 +118,7 @@ export async function requireStudent(context) {
         return { error: serverError('D1 database is not configured.') };
     }
     const cookies = parseCookies(request);
-    const sessionToken = cookies.session;
+    const sessionToken = cookies.session || readBearerToken(request);
     if (!sessionToken) {
         return { error: unauthorized('Not logged in: missing_cookie.') };
     }

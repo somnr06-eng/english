@@ -53,7 +53,8 @@ export async function onRequestPost(context) {
     const response = json({
         ok: true,
         studentId,
-        name: student.name
+        name: student.name,
+        sessionToken
     });
     response.headers.set('Set-Cookie', buildSessionCookie(sessionToken, isSecureRequest(request)));
     return response;

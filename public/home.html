@@ -596,6 +596,7 @@
 </div>
 
 <script>
+    const SESSION_STORAGE_KEY = 'english_session_token';
     const appScreen = document.getElementById('appScreen');
     const pageErrorBanner = document.getElementById('pageErrorBanner');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -631,6 +632,7 @@
             const response = await fetch('/api/session', {
                 method: 'GET',
                 credentials: 'same-origin',
+                headers: buildAuthHeaders(),
                 signal: controller.signal
             });
             if (!response.ok) {
@@ -652,11 +654,13 @@
         try {
             await fetch('/api/logout', {
                 method: 'POST',
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                headers: buildAuthHeaders()
             });
         } catch (error) {
             // Ignore network errors and clear local UI state anyway.
         }
+        localStorage.removeItem(SESSION_STORAGE_KEY);
         window.location.replace('/index.html');
     }
 
@@ -1648,6 +1652,15 @@
     let selectedDay = 1;          // currently selected day for preview/start
     let startLoading = false;
 
+    function buildAuthHeaders(extra = {}) {
+        const token = localStorage.getItem(SESSION_STORAGE_KEY);
+        const headers = { ...extra };
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+        return headers;
+    }
+
     function escapeHtml(value) {
         return String(value || '').replace(/[&<>"']/g, (char) => ({
             '&': '&amp;',
@@ -1676,7 +1689,8 @@
     async function fetchDaySession(day) {
         const response = await fetch(`/api/dictation/session?day=${day}`, {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: buildAuthHeaders()
         });
         const data = await response.json().catch(() => ({}));
         return { response, data };
@@ -1706,7 +1720,8 @@
         const response = await fetch('/api/dictation/quiz', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...buildAuthHeaders()
             },
             credentials: 'same-origin',
             body: JSON.stringify({ day, daysPlan })
@@ -1719,7 +1734,8 @@
         const response = await fetch('/api/dictation/submit', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...buildAuthHeaders()
             },
             credentials: 'same-origin',
             body: JSON.stringify({ day, items })
