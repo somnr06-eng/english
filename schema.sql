@@ -54,10 +54,8 @@ CREATE TABLE IF NOT EXISTS student_wrong_words (
     word TEXT NOT NULL,
     definition TEXT NOT NULL,
     source_day INTEGER NOT NULL,
-    is_active INTEGER NOT NULL DEFAULT 1,
     first_wrong_at TEXT NOT NULL,
     last_wrong_at TEXT NOT NULL,
-    last_correct_at TEXT,
     wrong_count INTEGER NOT NULL DEFAULT 1,
     PRIMARY KEY (student_id, word),
     FOREIGN KEY (student_id) REFERENCES students(student_id)

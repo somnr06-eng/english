@@ -92,6 +92,6 @@ npx wrangler dev --port 8788
 npx wrangler d1 execute english-dictation-pro --file=schema.sql
 ```
 
-如果你之前已经初始化过旧版本表结构，也需要重新执行一次最新的 `schema.sql`，因为当前版本新增了 `student_sessions` 表，并且给 `student_wrong_words` 增加了状态字段。
+如果你之前已经初始化过旧版本表结构，也需要重新执行一次最新的 `schema.sql`，因为当前版本新增了 `student_sessions` 表。
 
 学生账号建议提前生成 SHA-256 Base64URL 密码摘要后写入 `students.password_hash`。
