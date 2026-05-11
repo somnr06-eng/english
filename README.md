@@ -11,8 +11,8 @@ Cloudflare Workers + 静态资产 + D1 实现的英语听写应用。
 
 ## 项目结构
 
-- `index.html`: 登录页
-- `home.html`: 听写主页
+- `public/index.html`: 登录页
+- `public/home.html`: 听写主页
 - `worker.js`: Worker 路由入口
 - `functions/api/login.js`: 学生登录
 - `functions/api/session.js`: 登录态查询
@@ -73,6 +73,8 @@ npx wrangler dev --port 8788
 - 如果再次拼错，则保留在错题库中，并累加错误次数
 
 ## 部署到 Cloudflare Workers
+
+静态页面位于 `public/` 目录，Worker 会通过 `ASSETS` 绑定来提供这些资源。
 
 1. 推送代码到 Git 仓库
 2. 在 Cloudflare Dashboard 连接 Pages 项目

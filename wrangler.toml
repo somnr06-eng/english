@@ -8,6 +8,6 @@ database_name = "english"
 database_id = "a13e7079-323b-43e5-acb2-bba5db2a5ea7"
 
 [assets]
-directory = "./"
+directory = "./public"
 not_found_handling = "single-page-application"
 binding = "ASSETS"
