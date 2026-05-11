@@ -72,8 +72,6 @@ export async function onRequestPost(context) {
     const completedAt = new Date().toISOString();
 
     try {
-        await context.env.DB.exec('BEGIN TRANSACTION');
-
         const insertAttempt = await context.env.DB.prepare(
             `INSERT INTO dictation_attempts
              (student_id, day_no, attempt_date, total_count, correct_count, review_count, accuracy, completed_at)
@@ -133,10 +131,7 @@ export async function onRequestPost(context) {
                 ).run();
             }
         }
-
-        await context.env.DB.exec('COMMIT');
     } catch (error) {
-        await context.env.DB.exec('ROLLBACK').catch(() => {});
         return serverError(`提交写库失败: ${error?.message || String(error)}`);
     }
 
