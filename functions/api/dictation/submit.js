@@ -109,17 +109,26 @@ export async function onRequestPost(context) {
 
             if (item.isCorrect) {
                 await context.env.DB.prepare(
-                    'DELETE FROM student_wrong_words WHERE student_id = ? AND word = ?'
-                ).bind(auth.student.studentId, item.word).run();
+                    `UPDATE student_wrong_words
+                     SET is_active = 0,
+                         last_correct_at = ?
+                     WHERE student_id = ? AND word = ?`
+                ).bind(
+                    completedAt,
+                    auth.student.studentId,
+                    item.word
+                ).run();
             } else {
                 await context.env.DB.prepare(
                     `INSERT INTO student_wrong_words
-                     (student_id, word, definition, source_day, first_wrong_at, last_wrong_at, wrong_count)
-                     VALUES (?, ?, ?, ?, ?, ?, 1)
+                     (student_id, word, definition, source_day, is_active, first_wrong_at, last_wrong_at, last_correct_at, wrong_count)
+                     VALUES (?, ?, ?, ?, 1, ?, ?, NULL, 1)
                      ON CONFLICT(student_id, word) DO UPDATE SET
                         definition = excluded.definition,
                         source_day = excluded.source_day,
+                        is_active = 1,
                         last_wrong_at = excluded.last_wrong_at,
+                        last_correct_at = NULL,
                         wrong_count = student_wrong_words.wrong_count + 1`
                 ).bind(
                     auth.student.studentId,

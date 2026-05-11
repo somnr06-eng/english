@@ -83,7 +83,8 @@ export async function onRequestPost(context) {
     const wrongRows = await context.env.DB.prepare(
         `SELECT word, definition, source_day
          FROM student_wrong_words
-         WHERE student_id = ?`
+         WHERE student_id = ?
+           AND is_active = 1`
     ).bind(auth.student.studentId).all();
 
     const wrongCandidates = uniqueByWord((wrongRows.results || []).map((row) => ({
