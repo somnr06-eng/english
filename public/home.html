@@ -488,10 +488,22 @@
             .login-panel { padding-left: 1rem; padding-right: 1rem; }
         }
         .info-text { font-size: 0.8rem; color: #2d3748; margin-top: 6px; }
+        .page-error {
+            max-width: 720px;
+            margin: 24px auto 0;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #fecdd3;
+            background: #fff1f2;
+            color: #b42318;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
 <div class="app-shell">
+    <div id="pageErrorBanner" class="page-error hidden"></div>
     <div id="appScreen" class="dictation-container">
         <div class="header">
             <h1>📅 30-Day Spaced Repetition</h1>
@@ -585,6 +597,7 @@
 
 <script>
     const appScreen = document.getElementById('appScreen');
+    const pageErrorBanner = document.getElementById('pageErrorBanner');
     const logoutBtn = document.getElementById('logoutBtn');
     const loginUserDisplay = document.getElementById('loginUserDisplay');
     const dayStatusDisplay = document.getElementById('dayStatusDisplay');
@@ -598,16 +611,27 @@
             window.location.replace('/index.html');
             return;
         }
+        pageErrorBanner.classList.add('hidden');
+        pageErrorBanner.textContent = '';
         appScreen.classList.remove('hidden');
         loginUserDisplay.textContent = `当前登录学号：${currentUser.studentId}${currentUser.name ? ` · ${currentUser.name}` : ''}`;
         refreshSelectedDayStatus();
     }
 
+    function showPageError(message) {
+        pageErrorBanner.textContent = message;
+        pageErrorBanner.classList.remove('hidden');
+        appScreen.classList.remove('hidden');
+    }
+
     async function fetchSession() {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         try {
             const response = await fetch('/api/session', {
                 method: 'GET',
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                signal: controller.signal
             });
             if (!response.ok) {
                 window.location.replace('/index.html');
@@ -616,8 +640,10 @@
             const data = await response.json();
             currentUser = data.authenticated ? { studentId: data.studentId, name: data.name } : null;
         } catch (error) {
-            window.location.replace('/index.html');
+            showPageError('主页初始化失败：登录态接口没有正常返回。请先确认 Worker 和 D1 绑定是否正常，再刷新页面重试。');
             return;
+        } finally {
+            clearTimeout(timeoutId);
         }
         renderAuthView();
     }
