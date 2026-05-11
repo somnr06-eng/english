@@ -6,6 +6,17 @@ CREATE TABLE IF NOT EXISTS students (
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS student_sessions (
+    session_token TEXT PRIMARY KEY,
+    student_id TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TEXT NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_student_sessions_student
+ON student_sessions(student_id);
+
 CREATE TABLE IF NOT EXISTS dictation_attempts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id TEXT NOT NULL,

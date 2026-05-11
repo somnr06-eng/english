@@ -77,6 +77,11 @@ export async function verifySession(token, secret) {
     return expected === signature ? studentId : null;
 }
 
+export async function createSessionToken(studentId) {
+    const entropy = `${studentId}.${Date.now()}.${crypto.randomUUID()}`;
+    return sha256(entropy);
+}
+
 export async function diagnoseSessionToken(token, secret) {
     if (!token) {
         return { ok: false, reason: 'missing_cookie' };
@@ -106,18 +111,32 @@ export async function requireStudent(context) {
     if (!env.DB) {
         return { error: serverError('D1 database is not configured.') };
     }
-    if (!env.SESSION_SECRET) {
-        return { error: unauthorized('Session service is not configured.') };
-    }
     const cookies = parseCookies(request);
-    const diagnosis = await diagnoseSessionToken(cookies.session, env.SESSION_SECRET);
-    if (!diagnosis.ok) {
-        return { error: unauthorized(`Not logged in: ${diagnosis.reason}.`) };
+    const sessionToken = cookies.session;
+    if (!sessionToken) {
+        return { error: unauthorized('Not logged in: missing_cookie.') };
+    }
+
+    const sessionRow = await env.DB.prepare(
+        `SELECT session_token, student_id, expires_at
+         FROM student_sessions
+         WHERE session_token = ?`
+    ).bind(sessionToken).first();
+
+    if (!sessionRow) {
+        return { error: unauthorized('Not logged in: session_not_found.') };
+    }
+
+    if (new Date(sessionRow.expires_at).getTime() <= Date.now()) {
+        await env.DB.prepare(
+            'DELETE FROM student_sessions WHERE session_token = ?'
+        ).bind(sessionToken).run().catch(() => {});
+        return { error: unauthorized('Not logged in: session_expired.') };
     }
 
     const result = await env.DB.prepare(
         'SELECT student_id, name, status FROM students WHERE student_id = ?'
-    ).bind(diagnosis.studentId).first();
+    ).bind(sessionRow.student_id).first();
 
     if (!result || result.status !== 'active') {
         return { error: unauthorized('Student account is unavailable.') };

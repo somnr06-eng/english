@@ -1,18 +1,18 @@
 import {
     badRequest,
+    createSessionToken,
     isSecureRequest,
     isValidStudentId,
     json,
     buildSessionCookie,
     serverError,
-    sha256,
-    signSession
+    sha256
 } from './_utils.js';
 
 export async function onRequestPost(context) {
     const { request, env } = context;
 
-    if (!env.DB || !env.SESSION_SECRET) {
+    if (!env.DB) {
         return serverError('Missing Cloudflare environment variables.');
     }
 
@@ -43,7 +43,13 @@ export async function onRequestPost(context) {
         return json({ error: '学号或密码错误，请检查后重试。' }, { status: 401 });
     }
 
-    const sessionToken = await signSession(studentId, env.SESSION_SECRET);
+    const sessionToken = await createSessionToken(studentId);
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    await env.DB.prepare(
+        `INSERT INTO student_sessions (session_token, student_id, expires_at)
+         VALUES (?, ?, ?)`
+    ).bind(sessionToken, studentId, expiresAt).run();
+
     const response = json({
         ok: true,
         studentId,
