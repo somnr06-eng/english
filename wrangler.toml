@@ -1,10 +1,10 @@
-name = "english-dictation-pro"
+name = "english"
 compatibility_date = "2026-05-03"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "english-dictation-pro"
-database_id = "local-english-dictation-pro"
+database_name = "english"
+database_id = "a13e7079-323b-43e5-acb2-bba5db2a5ea7"
 
 [assets]
 directory = "./"
