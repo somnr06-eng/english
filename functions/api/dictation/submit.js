@@ -4,6 +4,7 @@ import {
     isPositiveDay,
     json,
     requireStudent,
+    serverError,
     todayKey
 } from '../_utils.js';
 
@@ -136,7 +137,7 @@ export async function onRequestPost(context) {
         await context.env.DB.exec('COMMIT');
     } catch (error) {
         await context.env.DB.exec('ROLLBACK').catch(() => {});
-        throw error;
+        return serverError(`提交写库失败: ${error?.message || String(error)}`);
     }
 
     return json({
